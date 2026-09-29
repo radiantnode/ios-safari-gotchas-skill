@@ -24,6 +24,11 @@ page, where `body` shows through, and your real `svh`/`dvh`/`lvh` and safe-area 
 
 <sub>iPhone 18 Pro, iOS 27.0 simulator. Same screen and numbers as the iPhone 17 Pro.</sub>
 
+**Check the claims yourself:** the
+[Safari colour probes](https://radiantnode.github.io/ios-safari-gotchas-skill/probes/) are the
+single-variable pages behind the `theme-color` and status-bar findings, with what each one showed
+in the simulator and on a real iPhone.
+
 ## What's covered
 
 | § | Gotcha |
@@ -88,7 +93,7 @@ skills/ios-safari-gotchas/
   references/reveal-ink.md        holding text and ground under a reveal's overhang (§12)
   scripts/ink.py, sheet.py        samplers for filmed frames
 .claude-plugin/                   Claude Code plugin and marketplace manifests
-docs/                             the live probe page (GitHub Pages), its screenshots, and probes/
+docs/                             GitHub Pages: the edge probe, its screenshots, and probes/ (the colour probes)
 ```
 
 ## License

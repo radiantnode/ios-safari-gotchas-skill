@@ -198,6 +198,17 @@ media) rather than *down* from the real page by deleting things — the real pag
 many interacting parts, and the per-URL cache will lie to you on the way down. Each
 minimal variant is one file and one 25-second shot.
 
+## Ready-made probes
+
+Two sets are already hosted:
+- https://radiantnode.github.io/ios-safari-gotchas-skill/ is the striped edge probe with a live
+  readout of the viewport units, insets and a guess at the tab layout.
+- https://radiantnode.github.io/ios-safari-gotchas-skill/probes/ has the single-variable colour
+  probes behind §1, §2 and §10, with the results recorded for the simulator and a real iPhone.
+
+Each colour-probe path gives one honest reading per device (rule 1). To rerun one, serve a copy
+under a new path.
+
 ## Emulating late scroll delivery (§5), in Playwright WebKit
 
 ```js

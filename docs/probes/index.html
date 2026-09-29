@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Safari Colour Probes</title>
+<meta name="description" content="Single-variable test pages behind the ios-safari-gotchas skill's claims about theme-color, the status bar and the strip under Safari's toolbar on iOS 27.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+  :root { --cyan: #00aeef; --yellow: #ffe600; --magenta: #ff00ff; --black: #000; --paper: #fff; --muted: #555; color-scheme: light; }
+  html, body { margin: 0; }
+  body { background: var(--paper); color: var(--black); font: 400 16px/1.5 Archivo, system-ui, sans-serif; -webkit-text-size-adjust: 100%; }
+  .band { height: 16px; background: repeating-linear-gradient(90deg, var(--cyan) 0 40px, var(--yellow) 40px 80px); }
+  main { max-width: 72rem; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { margin: 8px 0 12px; font-size: clamp(28px, 7vw, 44px); line-height: 1.04; font-weight: 850; font-variation-settings: "wdth" 125; }
+  h2 { margin: 40px 0 8px; font-size: 22px; line-height: 1.2; font-weight: 800; font-variation-settings: "wdth" 112; }
+  p, ul { max-width: 64ch; margin: 0 0 12px; }
+  li { margin-bottom: 6px; }
+  a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  a:focus-visible { outline: 3px solid var(--magenta); outline-offset: 2px; }
+  code { font-size: 0.92em; }
+  .muted { color: var(--muted); }
+  .back { display: inline-block; margin-bottom: 8px; font-weight: 700; }
+  .findings { border-block: 2px solid var(--black); padding: 12px 0; margin: 20px 0; }
+  .findings li { max-width: 70ch; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-block: 2px solid var(--black); }
+  table { border-collapse: collapse; min-width: 56rem; width: 100%; font-size: 15px; line-height: 1.4; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid #bbb; }
+  thead th { font-weight: 800; font-variation-settings: "wdth" 100; border-bottom: 2px solid var(--black); white-space: nowrap; }
+  tbody th { font-weight: 700; white-space: nowrap; }
+  tr:target { background: #fff7b3; }
+  .sw { display: inline-block; width: 0.8em; height: 0.8em; margin-right: 0.3em; vertical-align: -0.05em; border: 1px solid var(--black); }
+  .sw-stripe { background: repeating-linear-gradient(#fff 0 3px, #bbb 3px 6px); }
+</style>
+</head>
+<body>
+<div class="band" aria-hidden="true"></div>
+<main>
+  <a class="back" href="../">Back to the edge probe</a>
+  <h1>Safari colour probes</h1>
+  <p>Single-variable test pages behind the <a href="https://github.com/radiantnode/ios-safari-gotchas-skill">iOS Safari Gotchas</a>
+    skill's claims about <code>theme-color</code>, the status bar and the strip under Safari's toolbar. Every page has a magenta
+    <code>body</code> (<code>#ff00ff</code>), white and grey stripes, and a readout box. Where a page sets <code>theme-color</code>,
+    it is a colour that appears nowhere else on it, so any trace of it would show.</p>
+
+  <div class="findings">
+    <p><strong>What they showed on iOS 27</strong> (simulator, and a real iPhone 15 Pro Max with website tinting on):</p>
+    <ul>
+      <li><code>theme-color</code>'s colour never appeared: not in the status bar, the toolbar or the strip, on any page, device or tab layout.</li>
+      <li>When the status-bar sample fails (the blurred sticky header), the phone latched black on 8 of 11 loads and
+        <code>body</code>'s colour on 3, whatever the tag said, including no tag. Identical copies disagreed, so it's a race.
+        The simulator gave <code>body</code>'s colour every time.</li>
+      <li>Only an opaque sticky element sized to the viewport flattened the strip under the toolbar, and it filled with that element's
+        own colour. No page showed a flat <code>body</code> strip under the collapsed pill.</li>
+    </ul>
+    <p>The rules that follow from these are in the skill's SKILL.md, sections 1, 2 and 10.</p>
+  </div>
+
+  <h2>How to run them</h2>
+  <ul>
+    <li><strong>One load per page per device.</strong> Safari remembers the colours it picked for each path, so a reload replays
+      the first answer. To run a page again on the same device, copy it to a new path, or clear Safari's website data first.</li>
+    <li><strong>Expanded set:</strong> screenshot within 20 seconds of opening. Each page scrolls itself to y=1500 at 30 seconds,
+      so a second shot gives you mid-page.</li>
+    <li><strong>Collapsed set:</strong> these don't scroll themselves. Swipe up once so the bars collapse (a programmatic scroll
+      never does), check that the readout's <code>iH</code> jumps to <code>100lvh</code>, then screenshot.</li>
+    <li>Note your Safari tab layout and whether "Allow Website Tinting" is on (Settings › Apps › Safari).</li>
+    <li>New results, on any device or iOS version, are welcome as a
+      <a href="https://github.com/radiantnode/ios-safari-gotchas-skill/issues/new">GitHub issue</a>.</li>
+  </ul>
+
+  <h2 id="expanded">Toolbar expanded</h2>
+  <p>Simulator: iPhone 18 Pro, iOS 27.0, Compact tab bar. iPhone: 15 Pro Max, iOS 27, Bottom tab bar.</p>
+  <div class="scroll"><table>
+    <thead><tr><th scope="col">Probe</th><th scope="col">theme-color</th><th scope="col">On the page</th><th scope="col">Simulator</th><th scope="col">iPhone 15 Pro Max</th></tr></thead>
+    <tbody>
+<tr id="expanded-control">
+  <th scope="row"><a href="theme-color/control/">control</a></th>
+  <td><span class="muted">none</span></td><td>nothing sticky</td><td><span class="sw" style="background:#ff00ff"></span> status bar; <span class="sw sw-stripe"></span> stripes to the last row</td><td><span class="sw" style="background:#ff00ff"></span> status bar; identical to meta</td>
+</tr>
+<tr id="expanded-meta">
+  <th scope="row"><a href="theme-color/meta/">meta</a></th>
+  <td><code>#00ff00</code></td><td>nothing sticky</td><td>identical to control</td><td>identical to control, apart from the clock</td>
+</tr>
+<tr id="expanded-header-blur">
+  <th scope="row"><a href="theme-color/header-blur/">header-blur</a></th>
+  <td><code>#00ff00</code></td><td>translucent red sticky header with backdrop-filter blur</td><td><span class="sw" style="background:#ff00ff"></span> status bar</td><td><span class="sw" style="background:#000"></span> status bar</td>
+</tr>
+<tr id="expanded-header-blur-nometa">
+  <th scope="row"><a href="theme-color/header-blur-nometa/">header-blur-nometa</a></th>
+  <td><span class="muted">none</span></td><td>translucent red sticky header with backdrop-filter blur</td><td><span class="sw" style="background:#ff00ff"></span> status bar</td><td><span class="sw" style="background:#ff00ff"></span> status bar</td>
+</tr>
+<tr id="expanded-header-blur-white">
+  <th scope="row"><a href="theme-color/header-blur-white/">header-blur-white</a></th>
+  <td><code>#ffffff</code></td><td>translucent red sticky header with backdrop-filter blur</td><td>not run</td><td><span class="sw" style="background:#000"></span> status bar</td>
+</tr>
+<tr id="expanded-header-blur-blue">
+  <th scope="row"><a href="theme-color/header-blur-blue/">header-blur-blue</a></th>
+  <td><code>#0000ff</code></td><td>translucent red sticky header with backdrop-filter blur</td><td>not run</td><td><span class="sw" style="background:#ff00ff"></span> status bar</td>
+</tr>
+<tr id="expanded-header-blur-body">
+  <th scope="row"><a href="theme-color/header-blur-body/">header-blur-body</a></th>
+  <td><code>#ff00ff</code></td><td>translucent red sticky header with backdrop-filter blur</td><td>not run</td><td><span class="sw" style="background:#ff00ff"></span> status bar</td>
+</tr>
+<tr id="expanded-header-blur-dark">
+  <th scope="row"><a href="theme-color/header-blur-dark/">header-blur-dark</a></th>
+  <td><code>#203040</code></td><td>translucent red sticky header with backdrop-filter blur</td><td>not run</td><td><span class="sw" style="background:#000"></span> status bar</td>
+</tr>
+<tr id="expanded-repeat-green">
+  <th scope="row"><a href="theme-color/repeat-green/">repeat-green</a></th>
+  <td><code>#00ff00</code></td><td>copy of header-blur on a fresh path</td><td>not run</td><td><span class="sw" style="background:#000"></span> status bar</td>
+</tr>
+<tr id="expanded-repeat-blue">
+  <th scope="row"><a href="theme-color/repeat-blue/">repeat-blue</a></th>
+  <td><code>#0000ff</code></td><td>copy of header-blur-blue</td><td>not run</td><td><span class="sw" style="background:#000"></span> status bar (was <span class="sw" style="background:#ff00ff"></span>)</td>
+</tr>
+<tr id="expanded-repeat-white">
+  <th scope="row"><a href="theme-color/repeat-white/">repeat-white</a></th>
+  <td><code>#ffffff</code></td><td>copy of header-blur-white</td><td>not run</td><td><span class="sw" style="background:#000"></span> status bar</td>
+</tr>
+<tr id="expanded-repeat-none">
+  <th scope="row"><a href="theme-color/repeat-none/">repeat-none</a></th>
+  <td><span class="muted">none</span></td><td>copy of header-blur-nometa</td><td>not run</td><td><span class="sw" style="background:#000"></span> status bar (was <span class="sw" style="background:#ff00ff"></span>)</td>
+</tr>
+<tr id="expanded-flat-red">
+  <th scope="row"><a href="theme-color/flat-red/">flat-red</a></th>
+  <td><code>#00ff00</code></td><td>opaque red sticky 100dvh stage (§1)</td><td><span class="sw" style="background:#ff0000"></span> flat fill, <span class="sw" style="background:#ff0000"></span> status bar, red-tinted toolbar</td><td>not run</td>
+</tr>
+<tr id="expanded-flat-clear">
+  <th scope="row"><a href="theme-color/flat-clear/">flat-clear</a></th>
+  <td><code>#00ff00</code></td><td>transparent sticky 100dvh stage</td><td><span class="sw sw-stripe"></span> no flat fill; <span class="sw" style="background:#ff00ff"></span> status bar</td><td>not run</td>
+</tr>
+<tr id="expanded-flat-clear-nometa">
+  <th scope="row"><a href="theme-color/flat-clear-nometa/">flat-clear-nometa</a></th>
+  <td><span class="muted">none</span></td><td>transparent sticky 100dvh stage</td><td>identical to flat-clear</td><td>not run</td>
+</tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="collapsed">Toolbar collapsed</h2>
+  <p>Simulator: iPhone 18 Pro (Compact, all seven) and 15 Pro Max (Bottom: control, meta, flat-red). iPhone: 15 Pro Max, Bottom tab bar.</p>
+  <div class="scroll"><table>
+    <thead><tr><th scope="col">Probe</th><th scope="col">theme-color</th><th scope="col">On the page</th><th scope="col">Simulator</th><th scope="col">iPhone 15 Pro Max</th></tr></thead>
+    <tbody>
+<tr id="collapsed-control">
+  <th scope="row"><a href="theme-color-collapsed/control/">control</a></th>
+  <td><span class="muted">none</span></td><td>nothing sticky</td><td><span class="sw sw-stripe"></span> stripes under the pill to the last row</td><td><span class="sw sw-stripe"></span> stripes to the last row; frosted status bar with a magenta cast</td>
+</tr>
+<tr id="collapsed-meta">
+  <th scope="row"><a href="theme-color-collapsed/meta/">meta</a></th>
+  <td><code>#00ff00</code></td><td>nothing sticky</td><td>identical to control</td><td>not run</td>
+</tr>
+<tr id="collapsed-header-blur">
+  <th scope="row"><a href="theme-color-collapsed/header-blur/">header-blur</a></th>
+  <td><code>#00ff00</code></td><td>translucent red sticky header with backdrop-filter blur</td><td><span class="sw sw-stripe"></span> stripes to the last row; <span class="sw" style="background:#ff00ff"></span> status bar</td><td><span class="sw sw-stripe"></span> stripes to the last row; <span class="sw" style="background:#000"></span> status bar</td>
+</tr>
+<tr id="collapsed-header-blur-nometa">
+  <th scope="row"><a href="theme-color-collapsed/header-blur-nometa/">header-blur-nometa</a></th>
+  <td><span class="muted">none</span></td><td>translucent red sticky header with backdrop-filter blur</td><td>identical to header-blur</td><td>not run</td>
+</tr>
+<tr id="collapsed-flat-red">
+  <th scope="row"><a href="theme-color-collapsed/flat-red/">flat-red</a></th>
+  <td><code>#00ff00</code></td><td>opaque red sticky 100dvh stage (§1)</td><td><span class="sw" style="background:#ff0000"></span> flat fill on both devices; red-tinted pill</td><td>not run</td>
+</tr>
+<tr id="collapsed-flat-clear">
+  <th scope="row"><a href="theme-color-collapsed/flat-clear/">flat-clear</a></th>
+  <td><code>#00ff00</code></td><td>transparent sticky 100dvh stage</td><td><span class="sw sw-stripe"></span> stripes to the last row</td><td><span class="sw sw-stripe"></span> stripes to the last row</td>
+</tr>
+<tr id="collapsed-flat-clear-nometa">
+  <th scope="row"><a href="theme-color-collapsed/flat-clear-nometa/">flat-clear-nometa</a></th>
+  <td><span class="muted">none</span></td><td>transparent sticky 100dvh stage</td><td>identical to flat-clear</td><td>not run</td>
+</tr>
+    </tbody>
+  </table></div>
+  <p class="muted">On flat-clear the transparent stage takes up the first screen of the page, so <code>body</code> shows above the
+    stripes until you scroll past it. That's expected, and the bottom edge is what the page tests.</p>
+</main>
+</body>
+</html>

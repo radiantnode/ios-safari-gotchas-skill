@@ -1,25 +1,7 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>theme-color probes, collapsed</title>
-<style>body{margin:0;padding:16px;font:15px/1.45 system-ui,sans-serif;background:#fff;color:#000}
-table{border-collapse:collapse;width:100%}td,th{border:1px solid #000;padding:6px 8px;vertical-align:top;text-align:left}
-p{max-width:62ch}</style></head><body>
-<h1>theme-color probes, collapsed toolbar</h1>
-<p>Each page is its own path, because Safari remembers the colours it latched per path (SKILL.md §3).
-Colours: <code>body</code> magenta <code>#ff00ff</code>, theme-color green <code>#00ff00</code>, element red <code>#ff0000</code>,
-stripes white and grey. These copies do not scroll themselves. Swipe up to collapse Safari's bars (a programmatic scroll never collapses them), and check that the readout's iH jumps to 100lvh. The expanded-toolbar set and its result are in <a href="../theme-color/">../theme-color/</a>.</p>
-<p><strong>Result, 2026-09-29</strong> (iOS 27.0 simulator, website tinting on): iPhone 18 Pro in the Compact
-layout, all seven pages; iPhone 15 Pro Max in the Bottom layout, control, meta and flat-red. One swipe collapsed
-the bars (the window became 100lvh). <code>theme-color</code> showed nowhere: not in the pill, under it or in the
-status bar, and no green pixel appeared in 17 screenshots. Every page except <code>flat-red</code> had stripes in
-the screen's last row, so there was no flat <code>body</code> strip under the pill. <code>flat-red</code> flat-filled
-in red on both devices, and its pill took a red tint.</p>
-<table><tr><th>Probe</th><th>theme-color</th><th>Question</th></tr>
-<tr><td><a href="control/">control</a></td><td>none</td><td>No theme-color, nothing sticky. What do the status bar and strip read with only body set?</td></tr>
-<tr><td><a href="meta/">meta</a></td><td>#00ff00</td><td>Same page plus theme-color green. Does the status bar or the toolbar tint take the green?</td></tr>
-<tr><td><a href="header-blur/">header-blur</a></td><td>#00ff00</td><td>A sticky header, translucent red with backdrop-filter, and theme-color green. When the status-bar sample fails, does it fall back to green or to body?</td></tr>
-<tr><td><a href="header-blur-nometa/">header-blur-nometa</a></td><td>none</td><td>The same blurred header with no theme-color. Compare with header-blur.</td></tr>
-<tr><td><a href="flat-red/">flat-red</a></td><td>#00ff00</td><td>A sticky 100dvh stage painted red, which forces flat fill (§1), and theme-color green. Is the flat strip red, green or magenta?</td></tr>
-<tr><td><a href="flat-clear/">flat-clear</a></td><td>#00ff00</td><td>A transparent sticky 100dvh stage with no children, and theme-color green. With nothing opaque to read, is the strip green or magenta?</td></tr>
-<tr><td><a href="flat-clear-nometa/">flat-clear-nometa</a></td><td>none</td><td>The same transparent stage with no theme-color. Compare with flat-clear.</td></tr>
-</table></body></html>
+<meta http-equiv="refresh" content="0; url=../#collapsed">
+<title>Safari Colour Probes</title>
+<style>body{margin:0;padding:16px;font:16px/1.5 system-ui,sans-serif;background:#fff;color:#000}</style>
+</head><body><p><a href="../#collapsed">Safari colour probes</a></p></body></html>

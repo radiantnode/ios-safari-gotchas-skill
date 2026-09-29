@@ -7,18 +7,20 @@
 html,body{margin:0}
 body{background:#ff00ff;font:15px/1.35 -apple-system,system-ui,sans-serif}
 .s{height:4000px;background:repeating-linear-gradient(#fff 0 20px,#bbb 20px 40px)}
+#r a{color:#00e}
 #r{position:fixed;left:8px;top:120px;z-index:2;background:#fff;color:#000;border:2px solid #000;padding:6px 8px;max-width:70%;white-space:pre-wrap}
 .hdr{position:sticky;top:0;height:64px;background:rgba(255,0,0,.5);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);z-index:1}
 </style></head>
 <body>
 <div class="hdr"></div><div class="s"></div>
-<div id="r"></div>
+<div id="r"><span id="rv"></span>
+<a href="../../#expanded-repeat-blue">What this tests</a></div>
 <script>
 // theme-color probe "repeat-blue". body magenta, theme-color #0000ff, stripes white/grey.
 // Scrolls to 1500 by itself 30s after load, so one run gives a top shot and a mid-page shot.
 const t0 = Date.now();
 addEventListener('load', () => setTimeout(() => scrollTo(0, 1500), 30000));
-setInterval(() => { r.textContent = 'repeat-blue\ntheme-color #0000ff\n' +
+setInterval(() => { rv.textContent = 'repeat-blue\ntheme-color #0000ff\n' +
   'iH ' + innerHeight + '  y ' + Math.round(scrollY) + '  t ' + Math.round((Date.now() - t0) / 1000) + 's'; }, 300);
 </script>
 </body></html>

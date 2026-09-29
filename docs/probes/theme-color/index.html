@@ -1,38 +1,7 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>theme-color probes</title>
-<style>body{margin:0;padding:16px;font:15px/1.45 system-ui,sans-serif;background:#fff;color:#000}
-table{border-collapse:collapse;width:100%}td,th{border:1px solid #000;padding:6px 8px;vertical-align:top;text-align:left}
-p{max-width:62ch}</style></head><body>
-<h1>theme-color probes</h1>
-<p>Each page is its own path, because Safari remembers the colours it latched per path (SKILL.md §3).
-Colours: <code>body</code> magenta <code>#ff00ff</code>, theme-color green <code>#00ff00</code>, element red <code>#ff0000</code>,
-stripes white and grey. Each page scrolls itself to y=1500 thirty seconds after load.</p>
-<p><strong>Result, 2026-09-29</strong> (iPhone 18 Pro, iOS 27.0 simulator, Compact tab bar, "Allow
-Website Tinting" on): <code>theme-color</code> had no visible effect. No green pixel appeared in any of the
-14 screenshots. The status bar read <code>body</code>'s magenta, or the red stage's colour on
-<code>flat-red</code>. Each page with the tag was pixel-identical to its twin without it in the strip and
-the toolbar. <code>flat-red</code> flat-filled in the stage's red. <code>flat-clear</code> (transparent, nothing
-opaque inside) did not flat-fill.</p>
-<p><strong>Real phone, 2026-09-29</strong> (iPhone 15 Pro Max, iOS 27, Bottom tab bar, website tinting on):
-<code>control</code> and <code>meta</code> were pixel-identical apart from the clock. On the blurred-header pages
-the status bar latched black on 8 of 11 loads and <code>body</code>'s magenta on 3, whatever the
-<code>theme-color</code> was, including none. The <code>repeat-</code> copies of pages that had read magenta came
-back black, so the variation is a race, not the tag's value. The tag's own colour never appeared.</p>
-<table><tr><th>Probe</th><th>theme-color</th><th>Question</th></tr>
-<tr><td><a href="control/">control</a></td><td>none</td><td>No theme-color, nothing sticky. What do the status bar and strip read with only body set?</td></tr>
-<tr><td><a href="meta/">meta</a></td><td>#00ff00</td><td>Same page plus theme-color green. Does the status bar or the toolbar tint take the green?</td></tr>
-<tr><td><a href="header-blur/">header-blur</a></td><td>#00ff00</td><td>A sticky header, translucent red with backdrop-filter, and theme-color green. When the status-bar sample fails, does it fall back to green or to body?</td></tr>
-<tr><td><a href="header-blur-nometa/">header-blur-nometa</a></td><td>none</td><td>The same blurred header with no theme-color. Compare with header-blur.</td></tr>
-<tr><td><a href="flat-red/">flat-red</a></td><td>#00ff00</td><td>A sticky 100dvh stage painted red, which forces flat fill (§1), and theme-color green. Is the flat strip red, green or magenta?</td></tr>
-<tr><td><a href="flat-clear/">flat-clear</a></td><td>#00ff00</td><td>A transparent sticky 100dvh stage with no children, and theme-color green. With nothing opaque to read, is the strip green or magenta?</td></tr>
-<tr><td><a href="flat-clear-nometa/">flat-clear-nometa</a></td><td>none</td><td>The same transparent stage with no theme-color. Compare with flat-clear.</td></tr>
-<tr><td><a href="header-blur-white/">header-blur-white</a></td><td>#ffffff</td><td>The header-blur page with theme-color #ffffff. Which colour does the status bar fall back to?</td></tr>
-<tr><td><a href="header-blur-blue/">header-blur-blue</a></td><td>#0000ff</td><td>The header-blur page with theme-color #0000ff. Which colour does the status bar fall back to?</td></tr>
-<tr><td><a href="header-blur-body/">header-blur-body</a></td><td>#ff00ff</td><td>The header-blur page with theme-color #ff00ff. Which colour does the status bar fall back to?</td></tr>
-<tr><td><a href="header-blur-dark/">header-blur-dark</a></td><td>#203040</td><td>The header-blur page with theme-color #203040. Which colour does the status bar fall back to?</td></tr>
-<tr><td><a href="repeat-green/">repeat-green</a></td><td>as header-blur</td><td>Exact copy of header-blur on a fresh path, to check the result repeats.</td></tr>
-<tr><td><a href="repeat-blue/">repeat-blue</a></td><td>as header-blur-blue</td><td>Exact copy of header-blur-blue on a fresh path, to check the result repeats.</td></tr>
-<tr><td><a href="repeat-white/">repeat-white</a></td><td>as header-blur-white</td><td>Exact copy of header-blur-white on a fresh path, to check the result repeats.</td></tr>
-<tr><td><a href="repeat-none/">repeat-none</a></td><td>as header-blur-nometa</td><td>Exact copy of header-blur-nometa on a fresh path, to check the result repeats.</td></tr>
-</table></body></html>
+<meta http-equiv="refresh" content="0; url=../#expanded">
+<title>Safari Colour Probes</title>
+<style>body{margin:0;padding:16px;font:16px/1.5 system-ui,sans-serif;background:#fff;color:#000}</style>
+</head><body><p><a href="../#expanded">Safari colour probes</a></p></body></html>
