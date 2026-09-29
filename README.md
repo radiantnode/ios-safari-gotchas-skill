@@ -1,10 +1,11 @@
 # iOS Safari Gotchas
 
 An [agent skill](https://agentskills.io) for the iPhone Safari bugs that desktop browsers and
-headless WebKit never show. Examples: a flat colour band behind the bottom toolbar, the wrong
-colour behind the status bar, a hero that stops short of the screen's edge with one tab layout
-but not another, `dvh`/`svh`/`lvh` numbers that don't add up, and scroll-linked JS that flashes
-during a flick.
+headless WebKit never show, measured on iOS 27 with Safari's Liquid Glass toolbar. Examples:
+a flat colour band or the wrong tint behind the bottom toolbar, a status-bar colour that
+`theme-color` won't change, a hero that stops short of the screen's edge with one tab layout
+but not another, `100vh`/`dvh`/`svh`/`lvh` numbers that don't add up, safe-area insets that
+read 0 despite `viewport-fit=cover`, and scroll-linked JS that flashes during a flick.
 
 Every rule in it was first seen on a real iPhone and then pinned down in the iOS simulator by
 changing one thing at a time. Each one comes with the fix and a way to verify it. With the
@@ -86,7 +87,7 @@ skills/ios-safari-gotchas/
   references/reveal-ink.md        holding text and ground under a reveal's overhang (§12)
   scripts/ink.py, sheet.py        samplers for filmed frames
 .claude-plugin/                   Claude Code plugin and marketplace manifests
-docs/                             the live probe page (GitHub Pages) and its screenshots
+docs/                             the live probe page (GitHub Pages), its screenshots, and probes/
 ```
 
 ## License

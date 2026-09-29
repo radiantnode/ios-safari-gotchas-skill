@@ -2,9 +2,30 @@
   "name": "ios-safari-gotchas",
   "description": "Measured rules, fixes and simulator-based verification for iPhone Safari layout bugs that headless tests can't show: toolbar strips, status-bar colour, viewport units, safe areas, scroll-linked JS.",
   "version": "1.0.0",
-  "author": { "name": "Michael Simmons" },
+  "author": {
+    "name": "Michael Simmons"
+  },
   "homepage": "https://github.com/radiantnode/ios-safari-gotchas-skill",
   "repository": "https://github.com/radiantnode/ios-safari-gotchas-skill",
   "license": "MIT",
-  "keywords": ["ios", "safari", "webkit", "mobile", "css", "viewport", "dvh", "safe-area"]
+  "keywords": [
+    "ios",
+    "safari",
+    "ios-safari",
+    "mobile-safari",
+    "webkit",
+    "liquid-glass",
+    "safari-26",
+    "ios-27",
+    "theme-color",
+    "viewport",
+    "100vh",
+    "dvh",
+    "svh",
+    "lvh",
+    "safe-area",
+    "viewport-fit",
+    "ios-simulator",
+    "simctl"
+  ]
 }

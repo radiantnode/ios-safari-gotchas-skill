@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#00ff00">
+<title>theme-color probe: flat-red</title>
+<style>
+html,body{margin:0}
+body{background:#ff00ff;font:15px/1.35 -apple-system,system-ui,sans-serif}
+.s{height:4000px;background:repeating-linear-gradient(#fff 0 20px,#bbb 20px 40px)}
+#r{position:fixed;left:8px;top:120px;z-index:2;background:#fff;color:#000;border:2px solid #000;padding:6px 8px;max-width:70%;white-space:pre-wrap}
+.stage{position:sticky;top:0;height:100dvh;background:#ff0000}
+</style></head>
+<body>
+<div class="stage"></div><div class="s"></div>
+<div id="r"></div>
+<script>
+// theme-color probe "flat-red". body magenta, theme-color #00ff00, stripes white/grey.
+// Scrolls to 1500 by itself 30s after load, so one run gives a top shot and a mid-page shot.
+const t0 = Date.now();
+addEventListener('load', () => setTimeout(() => scrollTo(0, 1500), 30000));
+setInterval(() => { r.textContent = 'flat-red\ntheme-color #00ff00\n' +
+  'iH ' + innerHeight + '  y ' + Math.round(scrollY) + '  t ' + Math.round((Date.now() - t0) / 1000) + 's'; }, 300);
+</script>
+</body></html>
