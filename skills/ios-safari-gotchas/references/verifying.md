@@ -38,7 +38,7 @@ shoot () {  # url, name
 
 Three rules that cost a day when ignored:
 
-1. **One path per variant.** Safari remembers the latched colours per URL path. Query
+1. **One path per variant.** Safari remembers the latched colors per URL path. Query
    strings inherit the first load's answer. Copy the page to `/p/<variant>/index.html`
    for every probe.
 2. **Wait for load.** ~25s per shot in the simulator is not excessive. If a sample comes
@@ -52,7 +52,7 @@ Three rules that cost a day when ignored:
 
 ## Landing at a scroll offset
 
-To read colours mid-page without disturbing the toolbar, give the served copy a way to land
+To read colors mid-page without disturbing the toolbar, give the served copy a way to land
 there by itself (a real swipe also collapses the bars, which is a different state — see
 "Collapsing the toolbar" below):
 
@@ -62,14 +62,14 @@ if(y)setTimeout(()=>scrollTo(0,y),500);});</script>
 ```
 
 Note this scroll fires *no* `scroll` event in headless WebKit and may not in the simulator
-either — fine for reading colours, useless for exercising scroll handlers.
+either — fine for reading colors, useless for exercising scroll handlers.
 
 ## Reading the strip behind the toolbar (§1)
 
-Sample the left margin, clear of the toolbar, from the bottom up until the colour changes.
+Sample the left margin, clear of the toolbar, from the bottom up until the color changes.
 With the Compact bar x=20 (3x px) is clear; the Bottom bar spans nearly the full width, so
-use x=4 there, and expect the bar's frosting to tint what you read. The bottom colour is the strip; the distance to the change is its height; the
-colour just above it is the page's own edge.
+use x=4 there, and expect the bar's frosting to tint what you read. The bottom color is the strip; the distance to the change is its height; the
+color just above it is the page's own edge.
 
 ```python
 from PIL import Image
@@ -89,11 +89,11 @@ body { background: #ff00ff }
 ```
 
 Screenshot mid-page. Strip magenta → overdraw (the page is painting through the chrome).
-Strip any flat colour with magenta cut off above it → flat fill. This is the only reliable
-test; the page's own ground is usually the same colour as the fallback fill, so without
+Strip any flat color with magenta cut off above it → flat fill. This is the only reliable
+test; the page's own ground is usually the same color as the fallback fill, so without
 the magenta both modes look identical from outside.
 
-Mid-page, not at the end: past the document's end the strip is `body`'s colour in *both*
+Mid-page, not at the end: past the document's end the strip is `body`'s color in *both*
 modes (§10), so magenta at max scroll tells you nothing about the mode.
 
 ## Swap after load (§10)
@@ -154,13 +154,13 @@ pts = [(20, 60), (20, 150), (w - 20, 60), (w // 2, 30)]   # 3x screenshots; 62pt
 print([im.getpixel(p) for p in pts])
 ```
 
-All four should agree. Compare against the colour of whatever the page paints at its top.
+All four should agree. Compare against the color of whatever the page paints at its top.
 
 ## A transition map down one column (§11)
 
 For anything that is an *edge* rather than a field — a seam, a hairline, where one band
 stops and the next starts — sample a column in the gutter and print only the rows where
-the colour changes. Every edge on the page then arrives as a list, in device rows and in
+the color changes. Every edge on the page then arrives as a list, in device rows and in
 CSS px, and a 1px line is as legible as a 200px band:
 
 ```python
@@ -171,7 +171,7 @@ for y in range(900):                       # 3x: 900 rows ≈ the top 300pt
 ```
 
 ```
-   0 (css    0.0)  (14, 16, 19)     Safari's status strip — body's colour
+   0 (css    0.0)  (14, 16, 19)     Safari's status strip — body's color
  186 (css   62.0)  (92, 95, 96)     the seam
  189 (css   63.0)  (22, 24, 26)     the film
 ```
@@ -203,10 +203,10 @@ minimal variant is one file and one 25-second shot.
 Two sets are already hosted:
 - https://radiantnode.github.io/ios-safari-gotchas-skill/ is the striped edge probe with a live
   readout of the viewport units, insets and a guess at the tab layout.
-- https://radiantnode.github.io/ios-safari-gotchas-skill/probes/ has the single-variable colour
+- https://radiantnode.github.io/ios-safari-gotchas-skill/probes/ has the single-variable color
   probes behind §1, §2 and §10, with the results recorded for the simulator and a real iPhone.
 
-Each colour-probe path gives one honest reading per device (rule 1). To rerun one, serve a copy
+Each color-probe path gives one honest reading per device (rule 1). To rerun one, serve a copy
 under a new path.
 
 ## Emulating late scroll delivery (§5), in Playwright WebKit
@@ -281,7 +281,7 @@ shot. On the Bottom layout the bar becomes a pill and `innerHeight`/`dvh` jump t
 
 A reveal or sweep lasts about a second, and screenshots come ~0.5s apart. Film it instead.
 Record in the background, tap the control with injected touch, and stop the recorder with
-SIGINT, which is what finalises the file:
+SIGINT, which is what finalizes the file:
 
 ```sh
 xcrun simctl io "$U" recordVideo --codec=h264 --force out.mp4 & P=$!
@@ -327,12 +327,12 @@ Two samplers in this skill's `scripts/` folder. From the folder holding `frames/
 
 - **`ink.py`** prints one line per frame: a few single pixels (the strip behind the toolbar,
   say) and, for each band of text, its ground (the median, DARK/LIGHT/mid) and its ink (the
-  extreme away from the ground, light/dark/grey). `<<` marks a band whose ink disagrees
+  extreme away from the ground, light/dark/gray). `<<` marks a band whose ink disagrees
   with its ground. Split a line of text into halves so an edge passing along it shows in
   one half first. Coordinates are in pt at the top of the file; set them for the device and
   page.
 - **`sheet.py frames/ sheet.png 03072 03103 …`** stacks the bottom band of the named frames
-  into one image, labelled by time, to look at the handful of frames that `ink.py` flagged.
+  into one image, labeled by time, to look at the handful of frames that `ink.py` flagged.
 
 With no injected touch, a throwaway route per variant that clicks the control on a timer
 (`/sweep/<n>/`, 3s after load) does the tapping. Use distinct paths, as ever (rule 1), and

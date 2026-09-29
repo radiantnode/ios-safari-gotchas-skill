@@ -185,7 +185,7 @@
         the end of the page. On your own site, a fixed or sticky element sized to the viewport
         causes it on every screen.</li>
       <li><span class="swatch" style="background:var(--magenta)"></span>Magenta behind the clock:
-        Safari sampled <code>body</code>'s colour for the status bar when the page loaded, and
+        Safari sampled <code>body</code>'s color for the status bar when the page loaded, and
         keeps it.</li>
     </ul>
   </section>
@@ -193,11 +193,11 @@
   <section class="panel end" aria-labelledby="end">
     <h2 id="end">The page ends just below</h2>
     <p>Pull past the last stripe and the rubber band shows <code>body</code>: magenta. Safari re-reads
-      <code>body</code>'s colour live for the strip under the toolbar, but reads it only once for
+      <code>body</code>'s color live for the strip under the toolbar, but reads it only once for
       the status bar.</p>
     <p>These rules, their fixes and a way to verify each one in the iOS simulator are written up
       as an agent skill: <a href="https://github.com/radiantnode/ios-safari-gotchas-skill">iOS Safari Gotchas</a>.
-      The <a href="probes/">colour probes</a> are the test pages behind its <code>theme-color</code> and
+      The <a href="probes/">color probes</a> are the test pages behind its <code>theme-color</code> and
       status-bar findings.</p>
   </section>
 </main>
@@ -242,7 +242,7 @@
     if (Math.abs(d) <= 4) return 'Toolbar collapsed: the window is as tall as 100lvh. Scroll to the top to bring it back.';
     if (Math.abs(d - 40) <= 6) return 'Looks like the Compact tab bar, with the toolbar showing.';
     if (Math.abs(d - 100) <= 6) return 'Looks like the Bottom tab bar, with the toolbar showing.';
-    return `Unrecognised layout: the window is ${r(d)}px shorter than 100lvh. The Top layout has not been measured yet, so please report these numbers.`;
+    return `Unrecognized layout: the window is ${r(d)}px shorter than 100lvh. The Top layout has not been measured yet, so please report these numbers.`;
   };
 
   let last = {};

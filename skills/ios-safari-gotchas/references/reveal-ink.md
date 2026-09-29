@@ -9,18 +9,18 @@ the strip behind the toolbar. Two rules, each a visible fault on the phone witho
 
 - **The layer carries the old state's ground.** Otherwise what shows through it is the page's
   own ground, which changes on its own schedule. A `background-color` transition on the page
-  turned the strip behind the Bottom bar halfway to the new colour while a circle reveal was
+  turned the strip behind the Bottom bar halfway to the new color while a circle reveal was
   still in the top of the hero. With the old ground on the layer, the strip waits for the
   circle.
 - **Text under the overhang keeps its old ink until the edge reaches it.** Hold it with an
-  attribute that re-declares the old state's colour tokens on that section. Release it when
+  attribute that re-declares the old state's color tokens on that section. Release it when
   the edge first touches the section's text *on screen*: the union of its text boxes, from
   the first one's top down to the screen's bottom edge. A growing circle first touches that
-  box at its nearest point to the centre; a shrinking one first leaves it at its farthest.
+  box at its nearest point to the center; a shrinking one first leaves it at its farthest.
   Then fade the ink quickly (150ms).
 
 ```js
-// cx, cy: the circle's centre; H: the screen's bottom edge, as measured above
+// cx, cy: the circle's center; H: the screen's bottom edge, as measured above
 const onScreen = (section, H) => {
   const qs = [...section.querySelectorAll('p, h2, h3, li')].map((e) => e.getBoundingClientRect());
   const top = Math.min(...qs.map((q) => q.top));

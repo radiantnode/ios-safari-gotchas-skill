@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Safari Colour Probes</title>
+<title>Safari Color Probes</title>
 <meta name="description" content="Single-variable test pages behind the ios-safari-gotchas skill's claims about theme-color, the status bar and the strip under Safari's toolbar on iOS 27.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,28 +39,28 @@
 <div class="band" aria-hidden="true"></div>
 <main>
   <a class="back" href="../">Back to the edge probe</a>
-  <h1>Safari colour probes</h1>
+  <h1>Safari color probes</h1>
   <p>Single-variable test pages behind the <a href="https://github.com/radiantnode/ios-safari-gotchas-skill">iOS Safari Gotchas</a>
     skill's claims about <code>theme-color</code>, the status bar and the strip under Safari's toolbar. Every page has a magenta
-    <code>body</code> (<code>#ff00ff</code>), white and grey stripes, and a readout box. Where a page sets <code>theme-color</code>,
-    it is a colour that appears nowhere else on it, so any trace of it would show.</p>
+    <code>body</code> (<code>#ff00ff</code>), white and gray stripes, and a readout box. Where a page sets <code>theme-color</code>,
+    it is a color that appears nowhere else on it, so any trace of it would show.</p>
 
   <div class="findings">
     <p><strong>What they showed on iOS 27</strong> (simulator, and a real iPhone 15 Pro Max with website tinting on):</p>
     <ul>
-      <li><code>theme-color</code>'s colour never appeared: not in the status bar, the toolbar or the strip, on any page, device or tab layout.</li>
+      <li><code>theme-color</code>'s color never appeared: not in the status bar, the toolbar or the strip, on any page, device or tab layout.</li>
       <li>When the status-bar sample fails (the blurred sticky header), the phone latched black on 8 of 11 loads and
-        <code>body</code>'s colour on 3, whatever the tag said, including no tag. Identical copies disagreed, so it's a race.
-        The simulator gave <code>body</code>'s colour every time.</li>
+        <code>body</code>'s color on 3, whatever the tag said, including no tag. Identical copies disagreed, so it's a race.
+        The simulator gave <code>body</code>'s color every time.</li>
       <li>Only an opaque sticky element sized to the viewport flattened the strip under the toolbar, and it filled with that element's
-        own colour. No page showed a flat <code>body</code> strip under the collapsed pill.</li>
+        own color. No page showed a flat <code>body</code> strip under the collapsed pill.</li>
     </ul>
     <p>The rules that follow from these are in the skill's SKILL.md, sections 1, 2 and 10.</p>
   </div>
 
   <h2>How to run them</h2>
   <ul>
-    <li><strong>One load per page per device.</strong> Safari remembers the colours it picked for each path, so a reload replays
+    <li><strong>One load per page per device.</strong> Safari remembers the colors it picked for each path, so a reload replays
       the first answer. To run a page again on the same device, copy it to a new path, or clear Safari's website data first.</li>
     <li><strong>Expanded set:</strong> screenshot within 20 seconds of opening. Each page scrolls itself to y=1500 at 30 seconds,
       so a second shot gives you mid-page.</li>

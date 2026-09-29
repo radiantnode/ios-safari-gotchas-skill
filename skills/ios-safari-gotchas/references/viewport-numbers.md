@@ -18,7 +18,7 @@ client w x h    402 x 714       874 x 292
 Landscape on a real iPhone 15 Pro Max (iOS 27, Bottom bar): window 320 with Safari's
 chrome showing, 430 (the screen's full short side) once it hides; `svh` 320, `dvh` 320 →
 430, `lvh`/`vh` 430; insets 0 / 59 / 20 / 59. In landscape Safari swaps to a top bar with
-a tab row, and with website tinting on it paints that whole bar in `body`'s colour.
+a tab row, and with website tinting on it paints that whole bar in `body`'s color.
 
 And portrait by Safari tab layout (iOS 27.0 simulator, toolbar expanded unless noted;
 the 15 Pro Max Bottom and pill columns match a real phone exactly) — see §12:
@@ -41,7 +41,7 @@ collapses the bars). `innerHeight` and `dvh` follow the bars; `svh` and `lvh` do
 - **The strip below the layout viewport is set by the tab layout, not the phone**: 98pt
   with the Compact bar, 158pt with the Bottom bar, on every phone measured.
 - **The layout viewport starts under the status bar**: page y=0 is 59pt down on a 15 Pro
-  Max, 62pt on both 18s. What shows above it is `body`'s colour (§2, §10). So
+  Max, 62pt on both 18s. What shows above it is `body`'s color (§2, §10). So
   `screen.height - innerHeight` is the strip at the bottom *plus* the status bar — an
   over-estimate by 59–62pt, which is the safe direction for anything that must reach the
   edge.

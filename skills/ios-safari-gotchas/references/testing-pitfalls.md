@@ -16,7 +16,7 @@ Section numbers refer to SKILL.md.
   transitions only move when something makes it paint, and `requestAnimationFrame` barely
   fires (once in 1.6s, in a mobile context). Polled from inside `page.evaluate`, a
   clip-path circle read the same radius for over a second. Between Playwright screenshots
-  it sat at 0 for 2s, then jumped straight to its end, and a colour transition started 1.2s
+  it sat at 0 for 2s, then jumped straight to its end, and a color transition started 1.2s
   before the last shot had not moved at all. Headless
   Chromium ran the same page on time. Check the *logic* of an animated effect (what turns
   when, in what order) in Chromium; check anything tied to the screen's edge in the

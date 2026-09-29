@@ -13,7 +13,7 @@ def band(im, x0, x1, y0, y1):
     g = lum(px[len(px) // 2])                # the ground: the median
     ink = px[-1] if g < 110 else px[0]       # the ink: the extreme away from the ground
     gk = "DARK" if g < 60 else "LIGHT" if g > 170 else "mid"
-    ik = "light" if lum(ink) > 150 else "dark" if lum(ink) < 90 else "grey"
+    ik = "light" if lum(ink) > 150 else "dark" if lum(ink) < 90 else "gray"
     bad = (gk == "DARK" and ik != "light") or (gk == "LIGHT" and ik != "dark")
     return f"{gk:5} {ik:5} {hexc(ink)}{' <<' if bad else ''}"
 print("ms   ", *POINTS, *(f"| {k}" for k in BANDS))

@@ -2,7 +2,7 @@
 
 An [agent skill](https://agentskills.io) for the iPhone Safari bugs that desktop browsers and
 headless WebKit never show, measured on iOS 27 with Safari's Liquid Glass toolbar. Examples:
-a flat colour band or the wrong tint behind the bottom toolbar, a status-bar colour that
+a flat color band or the wrong tint behind the bottom toolbar, a status-bar color that
 `theme-color` won't change, a hero that stops short of the screen's edge with one tab layout
 but not another, `100vh`/`dvh`/`svh`/`lvh` numbers that don't add up, safe-area insets that
 read 0 despite `viewport-fit=cover`, and scroll-linked JS that flashes during a flick.
@@ -25,7 +25,7 @@ page, where `body` shows through, and your real `svh`/`dvh`/`lvh` and safe-area 
 <sub>iPhone 18 Pro, iOS 27.0 simulator. Same screen and numbers as the iPhone 17 Pro.</sub>
 
 **Check the claims yourself:** the
-[Safari colour probes](https://radiantnode.github.io/ios-safari-gotchas-skill/probes/) are the
+[Safari color probes](https://radiantnode.github.io/ios-safari-gotchas-skill/probes/) are the
 single-variable pages behind the `theme-color` and status-bar findings, with what each one showed
 in the simulator and on a real iPhone.
 
@@ -34,7 +34,7 @@ in the simulator and on a real iPhone.
 | § | Gotcha |
 |---|--------|
 | 1 | The flat strip behind the bottom toolbar, and the viewport-sized sticky/fixed element that ratchets the page into it |
-| 2 | The colour behind the status bar: what Safari samples, what it falls back to, and why `theme-color` does nothing on iOS 27 |
+| 2 | The color behind the status bar: what Safari samples, what it falls back to, and why `theme-color` does nothing on iOS 27 |
 | 3 | Safari caches both decisions per URL path, so query-string probes lie |
 | 4 | Viewport units and insets: measured `svh`/`lvh`/`dvh`/`vh`, insets, by phone and tab layout |
 | 5 | Scroll-linked JS during a flick: drive it from `requestAnimationFrame` |
@@ -42,7 +42,7 @@ in the simulator and on a real iPhone.
 | 7 | CSS transitions that WebKit parks at first paint |
 | 8 | Things that looked like fixes and were not |
 | 9 | Testing pitfalls that produce false results |
-| 10 | The strip's colour is `body`'s (live), and so is the status bar's (once, at load) |
+| 10 | The strip's color is `body`'s (live), and so is the status bar's (once, at load) |
 | 11 | A 1px hairline at a seam measured with `offsetHeight` |
 | 12 | How far the page runs under the toolbar depends on Safari's tab layout (Compact vs Bottom) |
 
@@ -93,7 +93,7 @@ skills/ios-safari-gotchas/
   references/reveal-ink.md        holding text and ground under a reveal's overhang (§12)
   scripts/ink.py, sheet.py        samplers for filmed frames
 .claude-plugin/                   Claude Code plugin and marketplace manifests
-docs/                             GitHub Pages: the edge probe, its screenshots, and probes/ (the colour probes)
+docs/                             GitHub Pages: the edge probe, its screenshots, and probes/ (the color probes)
 ```
 
 ## License

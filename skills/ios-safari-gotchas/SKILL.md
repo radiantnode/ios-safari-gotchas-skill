@@ -1,6 +1,6 @@
 ---
 name: ios-safari-gotchas
-description: "Use when a page misbehaves in iPhone Safari (iOS 26/27, Liquid Glass) and desktop or headless tests can't show it: a flat colour band or wrong tint behind the bottom toolbar, a dark footer cut off by a light strip, a flat strip under the collapsed toolbar, the wrong status-bar colour or theme-color not working, a sticky or fixed hero sized to the viewport, safe-area insets that read 0 despite viewport-fit=cover, 100vh/dvh/svh/lvh confusion, scroll-linked JS that flashes during a flick or rubber-band, a transition stuck at first paint, a hairline at a seam under a sticky bar, a hero, overlay or animation that stops at the toolbar in some Safari tab layouts (Compact/Bottom/Top) but not others, a hero that pushes the next section a screen down, a reveal whose text turns ahead of it, headless timings that disagree with the phone, or a probe that keeps returning the same answer. Measured rules, fixes and simctl checks in the iOS simulator; read it before touching anything tied to a screen edge or scroll."
+description: "Use when a page misbehaves in iPhone Safari (iOS 26/27, Liquid Glass) and desktop or headless tests can't show it: a flat color band or wrong tint behind the bottom toolbar, a dark footer cut off by a light strip, a flat strip under the collapsed toolbar, the wrong status-bar color or theme-color not working, a sticky or fixed hero sized to the viewport, safe-area insets that read 0 despite viewport-fit=cover, 100vh/dvh/svh/lvh confusion, scroll-linked JS that flashes during a flick or rubber-band, a transition stuck at first paint, a hairline at a seam under a sticky bar, a hero, overlay or animation that stops at the toolbar in some Safari tab layouts (Compact/Bottom/Top) but not others, a hero that pushes the next section a screen down, a reveal whose text turns ahead of it, headless timings that disagree with the phone, or a probe that keeps returning the same answer. Measured rules, fixes and simctl checks in the iOS simulator; read it before touching anything tied to a screen edge or scroll."
 ---
 
 # iOS Safari Gotchas
@@ -11,7 +11,7 @@ first three, and two of them ignore every property you would reach for first. Wh
 symptom below matches, don't reason from CSS — measure. The recipe is in
 `references/verifying.md`.
 
-A habit that would have saved most of the time: **iOS decides several colours once, at
+A habit that would have saved most of the time: **iOS decides several colors once, at
 load, from what is painted at that moment, and keeps them for the life of the page.**
 Anything you change afterwards is ignored, and so is anything you *declare* — it samples
 what it sees.
@@ -21,8 +21,8 @@ what it sees.
 ## 1. The strip behind the bottom toolbar
 
 **Symptom.** Below the page, behind Safari's floating toolbar, there is a flat band of one
-colour with the page cut off at a hard edge above it. On other pages of the same site the
-content runs on down behind a translucent toolbar. The band's colour may be "right" on the
+color with the page cut off at a hard edge above it. On other pages of the same site the
+content runs on down behind a translucent toolbar. The band's color may be "right" on the
 first screen and wrong on every screen after it.
 
 **What is happening.** Safari keeps a strip at the foot of the screen for its chrome,
@@ -33,12 +33,12 @@ that strip one of two ways:
 
 - **Overdraw** — it keeps painting the page there, under a translucent bar. The default.
 - **Flat fill** — it stops the page at the layout viewport and fills the strip with one
-  colour, chosen at load, kept for the whole document.
+  color, chosen at load, kept for the whole document.
 
 It picks flat fill when **an element that is `position: sticky` or `position: fixed` is
 the size of the dynamic viewport** (`inset: 0`, `100dvh`) — it reads that element as the
 page's ground rather than as one section of it. `body { position: fixed; inset: 0 }`, the
-classic scroll-lock shell, is exactly this. The fill colour is that element's own paint,
+classic scroll-lock shell, is exactly this. The fill color is that element's own paint,
 never `theme-color`: a red 100dvh stage with a green `theme-color` filled red (iOS 27.0
 simulator). A transparent stage with nothing opaque inside it did not flat-fill at all.
 
@@ -62,7 +62,7 @@ the strip reads, live, and it is the way to control it. See §10.
 
 **Fix.** Stop sizing the sticky element to exactly the viewport. The cheapest escape is to
 make it slightly short and let the parent's ground show under it — invisible if the
-element's bottom edge already lands on that colour:
+element's bottom edge already lands on that color:
 
 ```css
 .stage {
@@ -80,77 +80,77 @@ toolbar, which is where you wanted it anyway — and lay the visible UI out in a
 child at `100dvh` so bottom-anchored controls stay put. Never lock scrolling by fixing
 `body`; fix a child sized past the viewport instead.
 
-Changing the fill *colour* is not a fix. It turns a black band into a white one.
+Changing the fill *color* is not a fix. It turns a black band into a white one.
 
-**Verify.** Put a loud colour under the fold (`body { background: #ff00ff }`) and
-screenshot mid-page in the simulator: magenta in the strip = overdraw, any flat colour =
+**Verify.** Put a loud color under the fold (`body { background: #ff00ff }`) and
+screenshot mid-page in the simulator: magenta in the strip = overdraw, any flat color =
 flat fill. If ablating a real page gets nowhere, build the suspect up on minimal pages
 instead; eight of them found this rule after seventeen ablations had not
 (`references/verifying.md`, "Bisecting").
 
 ---
 
-## 2. The colour behind the status bar
+## 2. The color behind the status bar
 
-**Symptom.** The area behind the clock and battery is the wrong colour for the page —
+**Symptom.** The area behind the clock and battery is the wrong color for the page —
 light over a dark masthead, say — while another page with a similar top gets it right.
 
 **What is happening.** iOS samples what is painted at the top of the page, at load, and
 latches it. When the sample fails, what it falls back to is **not predictable on a real
-phone**. In the simulator it was `body`'s background colour every time. On an iPhone
+phone**. In the simulator it was `body`'s background color every time. On an iPhone
 15 Pro Max (iOS 27, Bottom bar, website tinting on), eleven loads of one page with a
-translucent, blurred sticky header latched **black** eight times and `body`'s colour three
+translucent, blurred sticky header latched **black** eight times and `body`'s color three
 times. Byte-identical copies on fresh paths disagreed, and the tag made no difference: a
 page with no `theme-color` went black too.
 
 **`theme-color` is never the answer on iOS 27.** Across those eleven loads the tag was
-green, white, blue, dark slate, `body`'s own colour, or absent, and its colour never
+green, white, blue, dark slate, `body`'s own color, or absent, and its color never
 appeared. Pages whose sample succeeded were pixel-identical with and without it on the
 phone and in the simulator, in the status bar, the toolbar and the strip. Keep the tag for
 other browsers if you like, but it is not a lever here, and a failed sample is not
 something to design around: make the sample succeed (the fix below).
 
 What makes the sample fail differs by page, and the same three probes settle it every time
-(loud colours, distinct paths — see §3):
+(loud colors, distinct paths — see §3):
 - A **`backdrop-filter`** on the element at the top. Measured on one site: a masthead at
   96% near-black with `blur(12px)` → light status bar; filter removed → sampled to the
-  bar's own colour; opaque with the filter kept → still light.
+  bar's own color; opaque with the filter kept → still light.
 - A **sticky header with a translucent ground**, blur or not. Measured on another site:
   removing the blur changed nothing; making the header static made the sample succeed;
   and painting the sticky header a solid `background-color` (`#0000ff` as a probe) made the
-  sample read exactly that colour, blur kept.
+  sample read exactly that color, blur kept.
 - A **fixed media layer** (video/poster) at the top: hidden, the sample succeeds; present,
   it falls back.
 
 On a third site (iOS 27, iPhone 17 Pro) none of that mattered: the status bar followed
-`body`'s background colour, full stop — even a solid, unfiltered sticky header did not win
-the sample back — read once, at load. The bottom strip reads the same colour live, and
+`body`'s background color, full stop — even a solid, unfiltered sticky header did not win
+the sample back — read once, at load. The bottom strip reads the same color live, and
 that timing difference is what makes §10 possible.
 
 Once the page scrolls, what shows behind the status bar depends on what is at the top. On
 a page with nothing sticky, the scrolled content shows through, frosted. With a painted
-sticky header (translucent red, blurred), the latched colour stayed, both with the bars
+sticky header (translucent red, blurred), the latched color stayed, both with the bars
 expanded and with them collapsed. A transparent sticky stage was mixed: frosted after a
-programmatic scroll with the bars expanded, the latched colour after a swipe collapsed
+programmatic scroll with the bars expanded, the latched color after a swipe collapsed
 them. That case is unresolved (iOS 27.0 simulator). On a real phone the frost over
-scrolled content keeps a cast of the latched colour (magenta read `d88adf`); in the
-simulator it was neutral grey. So read the status bar's latched colour at `scrollY` 0.
+scrolled content keeps a cast of the latched color (magenta read `d88adf`); in the
+simulator it was neutral gray. So read the status bar's latched color at `scrollY` 0.
 
 **Fix, in order.** Give the element under the status bar a solid `background-color` — that
 is what the sampler reads most reliably. If it still falls back, remove that element's
 `backdrop-filter` (invisible behind a ≥ 95%-opaque ground anyway). If a media layer is
 what sits there, accept the fallback and make `body`'s background match the ground (§10).
 
-**Diagnose, don't assume.** Paint the top element one loud colour and `body` a different
+**Diagnose, don't assume.** Paint the top element one loud color and `body` a different
 one, on their own probe path: the status bar then tells you whether you got a sample or a
-fallback. Probe colours that match the page's own ground tell you
+fallback. Probe colors that match the page's own ground tell you
 nothing.
 
 ---
 
 ## 3. Safari caches these decisions per URL
 
-Both colours above are remembered **per URL path**. Probing variants through query strings
+Both colors above are remembered **per URL path**. Probing variants through query strings
 (`?variant=b`) returns the first load's answer every time and sends you down false
 trails — it did here for a dozen probes. Serve each variant under its own path
 (`/p/variant-b/`).
@@ -243,7 +243,7 @@ const top = r.top + b, bottom = r.bottom + b;   // where it would be at rest
 ## 7. Transitions started before first paint
 
 **Symptom.** An element whose state is set by a script before first paint shows its
-*previous* colour for a second or more, then snaps. WebKit only.
+*previous* color for a second or more, then snaps. WebKit only.
 
 **What is happening.** WebKit starts a CSS transition for the opening state — which is not
 a change and should not animate — and parks it at `currentTime: 0`. Measured still
@@ -271,7 +271,7 @@ el.removeAttribute('data-boot');
   keyframes) — and on the real page the timeline sat inactive (`progress` 0, then `null`).
   Cross-element named view timelines via `timeline-scope` did not drive at all in WebKit.
   Keep a JS path; treat scroll timelines as an enhancement you verify on device.
-- **Changing a latched colour after load**, or the flat fill's colour instead of its mode.
+- **Changing a latched color after load**, or the flat fill's color instead of its mode.
   Ignored for the status bar and a ratcheted strip (§1, §2); a plain strip is live (§10).
 
 ---
@@ -284,7 +284,7 @@ and an eyeballed screenshot is a guess where a sampled pixel is a fact. Read
 
 ---
 
-## 10. The strip's colour is `body`'s — and so is the status bar's, once
+## 10. The strip's color is `body`'s — and so is the status bar's, once
 
 **Symptom.** A page that ends on a dark full-bleed band shows a light strip under the band
 at the foot of the screen with the toolbar expanded — the band cut off at a hard edge. Or,
@@ -296,9 +296,9 @@ it, and the status bar is black on pages that are light.
 sticky, no ratchet. Safari still keeps a strip at the foot of the screen below the layout
 viewport (98pt with the Compact bar, 158pt with the Bottom bar — §4, §12).
 With the toolbar **expanded** the page paints on down into it, and only past the document's
-end does Safari paint something else: `body`'s background colour. With the toolbar
+end does Safari paint something else: `body`'s background color. With the toolbar
 **collapsed** to its pill the page was seen, on a phone, to stop at the layout viewport with
-the whole strip in `body`'s colour, on every screen — so a `body` that is dark cut every
+the whole strip in `body`'s color, on every screen — so a `body` that is dark cut every
 page off, and a `body` that is light cut a dark footer off.
 
 That collapsed-pill reading is from a real phone on a real page and has not been pinned
@@ -307,7 +307,7 @@ the pill by a swipe, on an 18 Pro (Compact) and a 15 Pro Max (Bottom). They had 
 sticky, a translucent blurred sticky header, or a transparent sticky 100dvh stage. Every
 one painted its stripes under the pill to the screen's last row, with no `body` strip.
 Only an *opaque* 100dvh sticky stage changed it, and that was §1's flat fill in the
-stage's own colour, not `body`'s. A real iPhone 15 Pro Max (Bottom bar, collapsed to the
+stage's own color, not `body`'s. A real iPhone 15 Pro Max (Bottom bar, collapsed to the
 pill) agreed: stripes to the last row on the plain page, the blurred-header page and the
 transparent-stage page. So the flat strip in the original report came from something on
 that page, most likely an opaque viewport-sized sticky or fixed element (§1). Look for one
@@ -320,7 +320,7 @@ sticky header — no. A gradient on `body` with no `background-color` — Safari
 paints **both ends white**. Only `body`'s computed `background-color`, and it is re-read
 **live**: set it 3s after load and the strip follows.
 
-The status bar reads the same colour — but **once, at load, and never again** (§2, third
+The status bar reads the same color — but **once, at load, and never again** (§2, third
 case). That asymmetry is the whole trick: what the page loads with is what the status bar
 keeps; what `body` is afterwards is what the strip shows.
 
@@ -352,12 +352,12 @@ Three guards, each of which was a bug without it:
   after `load`, with a ~3s fallback for a page reloaded at the bottom and left alone. Not
   on `scroll`: a reload restores the scroll position and fires `scroll` with no finger on
   the glass, and with everything cached `load` comes early enough that Safari's UI is still
-  taking colour updates when a swap timed from it lands. It latched the dark colour on some
+  taking color updates when a swap timed from it lands. It latched the dark color on some
   reloads and not others.
 - **Hold the release.** The edge jitters for a frame or two at the end of a flick and past
-  the end of the document; a binary compare flickered the strip between the two colours.
+  the end of the document; a binary compare flickered the strip between the two colors.
 - **Reset on `pagehide`, re-arm on `pageshow`** so a page restored from the back-forward
-  cache does not hand the status bar the dark colour to latch.
+  cache does not hand the status bar the dark color to latch.
 
 Desktop is untouched by the gate: the only place `body` shows there is the rubber-band
 past either end, which stays the page's own ground.
@@ -371,7 +371,7 @@ trust the phone and say so.
 
 ## 11. A hairline of ground at a measured seam
 
-**Symptom.** A 1px line of the page's own ground colour along the top edge of a full-bleed
+**Symptom.** A 1px line of the page's own ground color along the top edge of a full-bleed
 section that is supposed to run *under* a sticky bar. It comes and goes with the bar's
 height — there at one phone width, gone at another, never on desktop — and no headless
 screenshot shows it, because at 1x the fraction that causes it rounds away.
@@ -392,7 +392,7 @@ a field of `21,24,26`, the page's ground seen through the bar's 66% vignette.
 
 Only the visibility is iOS's doing — a fifth of a CSS pixel is paintable at 3x, and the
 line sits directly under the strip Safari paints behind the status bar (§10), which is a
-different colour, so the eye lands on it. The bug itself is everywhere.
+different color, so the eye lands on it. The bug itself is everywhere.
 
 **Fix.** Publish the height with its fraction intact —
 `bar.getBoundingClientRect().height`, never `offsetHeight` or `clientHeight` — or pull a
@@ -401,7 +401,7 @@ direction at a seam; rounding down is the one that shows ground.
 
 **Or keep it, and then draw it.** Between Safari's chrome and a dark first act this line
 is the only edge saying where the page begins, and it is worth having on purpose — where
-it is a 1px rule in the ground colour at the section's top, under the bar's own gradient,
+it is a 1px rule in the ground color at the section's top, under the bar's own gradient,
 which lands on the same value the rounding produced. Scope it to `(pointer: coarse)`: on a
 desktop there is no chrome up there for it to answer, and the accident never happened
 there anyway, because the bar was always a whole number of pixels tall.
@@ -416,7 +416,7 @@ when the bar's height changes is this bug, not a design.
 ## 12. The page runs on under the toolbar to the screen's edge — how far depends on the tab layout
 
 **Symptom.** Something meant to cover the whole screen — a hero sized "a bit past the
-viewport", a clip-path reveal or colour sweep, an overlay — stops in a hard line at the top
+viewport", a clip-path reveal or color sweep, an overlay — stops in a hard line at the top
 edge of Safari's bottom bar, with the next section (or `body`) showing behind the bar. It
 reproduces on one person's phone and not on yours, or not in the simulator, and the phone
 model turns out not to be the difference. Or, once it does reach the edge: the next section
@@ -481,7 +481,7 @@ height and hang the layer past it instead:
 The `z-index` is not optional: a positioned layer paints over later siblings that are not
 positioned, so without it the overhang covers the next section's text.
 
-Anything that animates *to* that edge — a circle's radius, the moment a colour is handed to
+Anything that animates *to* that edge — a circle's radius, the moment a color is handed to
 `body` (§10) — must measure the same edge, e.g. with a hidden probe inside the section that
 inherits `--over`, not from `innerHeight`.
 
