@@ -233,7 +233,9 @@
   // Compact bar showing, 100 with the Bottom bar showing, 0 once collapsed.
   const guess = (m) => {
     if (!matchMedia('(pointer: coarse)').matches) return 'This looks like a desktop browser. Open the page on an iPhone.';
-    if (m.w > m.ih) return 'Landscape. Safari hides almost all of its chrome here; rotate back to guess the tab layout.';
+    if (m.w > m.ih) return Math.abs(m.lvh - m.ih) <= 4
+      ? 'Landscape, with Safari\'s chrome hidden. Rotate back to guess the tab layout.'
+      : `Landscape, with Safari's chrome showing: the window is ${r(m.lvh - m.ih)}px shorter than 100lvh. Rotate back to guess the tab layout.`;
     const d = m.lvh - m.ih;
     if (Math.abs(d) <= 4) return 'Toolbar collapsed: the window is as tall as 100lvh. Scroll to the top to bring it back.';
     if (Math.abs(d - 40) <= 6) return 'Looks like the Compact tab bar, with the toolbar showing.';

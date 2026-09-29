@@ -14,6 +14,11 @@ Website Tinting" on): <code>theme-color</code> had no visible effect. No green p
 <code>flat-red</code>. Each page with the tag was pixel-identical to its twin without it in the strip and
 the toolbar. <code>flat-red</code> flat-filled in the stage's red. <code>flat-clear</code> (transparent, nothing
 opaque inside) did not flat-fill.</p>
+<p><strong>Real phone, 2026-09-29</strong> (iPhone 15 Pro Max, iOS 27, Bottom tab bar, website tinting on):
+<code>control</code> and <code>meta</code> were pixel-identical apart from the clock. On the blurred-header pages
+the status bar latched black on 8 of 11 loads and <code>body</code>'s magenta on 3, whatever the
+<code>theme-color</code> was, including none. The <code>repeat-</code> copies of pages that had read magenta came
+back black, so the variation is a race, not the tag's value. The tag's own colour never appeared.</p>
 <table><tr><th>Probe</th><th>theme-color</th><th>Question</th></tr>
 <tr><td><a href="control/">control</a></td><td>none</td><td>No theme-color, nothing sticky. What do the status bar and strip read with only body set?</td></tr>
 <tr><td><a href="meta/">meta</a></td><td>#00ff00</td><td>Same page plus theme-color green. Does the status bar or the toolbar tint take the green?</td></tr>

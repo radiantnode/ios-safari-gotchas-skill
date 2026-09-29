@@ -98,12 +98,19 @@ had not. Details in `references/verifying.md`.
 light over a dark masthead, say — while another page with a similar top gets it right.
 
 **What is happening.** iOS samples what is painted at the top of the page, at load, and
-latches it. When the sample fails it falls back to `body`'s background colour.
-**`theme-color` plays no part on iOS 27**: with a translucent, blurred sticky header (the
-failing case below) and `theme-color` `#00ff00`, the status bar read `body`'s magenta,
-pixel for pixel the same as without the tag, and no green appeared in the status bar,
-the toolbar or the strip on any of seven probe pages (iOS 27.0 simulator, "Allow Website
-Tinting" on). Keep the tag for other browsers if you like, but it is not a lever here.
+latches it. When the sample fails, what it falls back to is **not predictable on a real
+phone**. In the simulator it was `body`'s background colour every time. On an iPhone
+15 Pro Max (iOS 27, Bottom bar, website tinting on), eleven loads of one page with a
+translucent, blurred sticky header latched **black** eight times and `body`'s colour three
+times. Byte-identical copies on fresh paths disagreed, and the tag made no difference: a
+page with no `theme-color` went black too.
+
+**`theme-color` is never the answer on iOS 27.** Across those eleven loads the tag was
+green, white, blue, dark slate, `body`'s own colour, or absent, and its colour never
+appeared. Pages whose sample succeeded were pixel-identical with and without it on the
+phone and in the simulator, in the status bar, the toolbar and the strip. Keep the tag for
+other browsers if you like, but it is not a lever here, and a failed sample is not
+something to design around: make the sample succeed (the fix below).
 
 What makes the sample fail differs by page, and the same three probes settle it every time
 (loud colours, distinct paths — see §3):
@@ -128,8 +135,9 @@ a page with nothing sticky, the scrolled content shows through, frosted. With a 
 sticky header (translucent red, blurred), the latched colour stayed, both with the bars
 expanded and with them collapsed. A transparent sticky stage was mixed: frosted after a
 programmatic scroll with the bars expanded, the latched colour after a swipe collapsed
-them. That case is unresolved (iOS 27.0 simulator). So read the status bar's latched
-colour at `scrollY` 0.
+them. That case is unresolved (iOS 27.0 simulator). On a real phone the frost over
+scrolled content keeps a cast of the latched colour (magenta read `d88adf`); in the
+simulator it was neutral grey. So read the status bar's latched colour at `scrollY` 0.
 
 **Fix, in order.** Give the element under the status bar a solid `background-color` — that
 is what the sampler reads most reliably. If it still falls back, remove that element's
@@ -173,8 +181,13 @@ insets T/R/B/L  0 / 0 / 0 / 0   0 / 62 / 20 / 62
 client w x h    402 x 714       874 x 292
 ```
 
-And portrait by Safari tab layout (iOS 27.0 simulator, toolbar expanded unless noted) —
-see §12:
+Landscape on a real iPhone 15 Pro Max (iOS 27, Bottom bar): window 320 with Safari's
+chrome showing, 430 (the screen's full short side) once it hides; `svh` 320, `dvh` 320 →
+430, `lvh`/`vh` 430; insets 0 / 59 / 20 / 59. In landscape Safari swaps to a top bar with
+a tab row, and with website tinting on it paints that whole bar in `body`'s colour.
+
+And portrait by Safari tab layout (iOS 27.0 simulator, toolbar expanded unless noted;
+the 15 Pro Max Bottom and pill columns match a real phone exactly) — see §12:
 
 ```
                          15 Pro Max               18 Pro Max   18 Pro
@@ -202,11 +215,13 @@ collapses the bars). `innerHeight` and `dvh` follow the bars; `svh` and `lvh` do
   932 − 59 − 815), whatever the tab layout. It is not "the screen".
 - **Portrait reports all four `env(safe-area-inset-*)` as 0.** Safari reserves its own
   chrome rather than handing the page an inset. Insets only become real in landscape, and
-  the real side value is 62px — Playwright's device descriptors fake 47.
+  the side value follows the phone's status-bar depth: 62px on a 17 Pro, 59px on a 15 Pro
+  Max. Playwright's device descriptors fake 47.
 - **`vh` overshoots** by 40pt portrait, 110pt landscape. A `vh`-sized hero hangs its bottom
   content that far below the screen.
 - **`dvh` for a viewport-sized stage; not `svh`.** In landscape Safari hides its chrome
-  almost entirely and an `svh` stage stops 110pt short, with the parent's ground exposed.
+  almost entirely (entirely, on a 15 Pro Max) and an `svh` stage stops 110pt short, with
+  the parent's ground exposed.
 - **No `min-height` on a viewport-sized element.** A 22rem floor silently overrode a
   292px landscape viewport and put a clipping bug back.
 - Playwright's WebKit models none of `svh`, `dvh`, or `env()`. Anything depending on them
@@ -342,9 +357,11 @@ the pill by a swipe, on an 18 Pro (Compact) and a 15 Pro Max (Bottom). They had 
 sticky, a translucent blurred sticky header, or a transparent sticky 100dvh stage. Every
 one painted its stripes under the pill to the screen's last row, with no `body` strip.
 Only an *opaque* 100dvh sticky stage changed it, and that was §1's flat fill in the
-stage's own colour, not `body`'s. Before building on the flat strip, check whether
-something on the page — an opaque viewport-sized sticky or fixed element (§1) — is what
-flattens it there, and confirm on the phone.
+stage's own colour, not `body`'s. A real iPhone 15 Pro Max (Bottom bar, collapsed to the
+pill) agreed: stripes to the last row on the plain page, the blurred-header page and the
+transparent-stage page. So the flat strip in the original report came from something on
+that page, most likely an opaque viewport-sized sticky or fixed element (§1). Look for one
+before building on the flat strip.
 
 Measured (iOS 27, iPhone 17 Pro, sampling the strip at max scroll): **nothing else reaches
 it.** A background on `html` — no. `theme-color` — no. A `position: fixed` sheet hung below
