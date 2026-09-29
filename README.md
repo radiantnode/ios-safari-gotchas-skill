@@ -11,6 +11,11 @@ changing one thing at a time. Each one comes with the fix and a way to verify it
 skill installed, your agent reads it before touching anything anchored to a screen edge or
 driven by scroll position, and measures instead of guessing from CSS.
 
+**Try it on your phone:** open
+[radiantnode.github.io/ios-safari-gotchas-skill](https://radiantnode.github.io/ios-safari-gotchas-skill/)
+in iPhone Safari. The page is a striped ruler that shows where Safari stops drawing your
+page, where `body` shows through, and your real `svh`/`dvh`/`lvh` and safe-area numbers.
+
 ## What's covered
 
 | § | Gotcha |
@@ -74,6 +79,7 @@ skills/ios-safari-gotchas/
   references/reveal-ink.md        holding text and ground under a reveal's overhang (§12)
   scripts/ink.py, sheet.py        samplers for filmed frames
 .claude-plugin/                   Claude Code plugin and marketplace manifests
+docs/index.html                   the live probe page, served by GitHub Pages
 ```
 
 ## License
