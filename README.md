@@ -81,8 +81,9 @@ If one no longer holds, please open an issue with the device, iOS version and ta
 
 ```
 skills/ios-safari-gotchas/
-  SKILL.md                        the rules and fixes, §1–§12
+  SKILL.md                        the rules and fixes, §1–§12 (under 500 lines)
   references/verifying.md         simulator recipes: screenshots, pixel sampling, filming
+  references/viewport-numbers.md  measured viewport units and insets by phone and layout (§4)
   references/testing-pitfalls.md  headless harness traps (§9)
   references/reveal-ink.md        holding text and ground under a reveal's overhang (§12)
   scripts/ink.py, sheet.py        samplers for filmed frames

@@ -144,7 +144,7 @@ A fixed box in the corner, refreshed on an interval, is worth more than any log:
 ```
 
 On a 17 Pro with the Compact bar, `innerHeight` 714 is the toolbar showing and 754 is it
-collapsed; other phones and the Bottom layout differ (SKILL.md §4). `foot.bottom === innerHeight`
+collapsed; other phones and the Bottom layout differ (`viewport-numbers.md`). `foot.bottom === innerHeight`
 at max scroll is what makes an exact compare flicker.
 
 ## Reading the status bar (§2)
@@ -264,7 +264,7 @@ or in flat fill, §1). Serve it as a static file; a dev server that maps `/probe
 A swipe collapses Safari's bars; `scrollTo` never does. With injected touch, drag upward
 through the middle of the page (e.g. 650pt → 350pt over ~0.35s) and wait 3s before the
 shot. On the Bottom layout the bar becomes a pill and `innerHeight`/`dvh` jump to `lvh`
-(§4 table). Read the probe to confirm which state you actually shot.
+(`viewport-numbers.md`). Read the probe to confirm which state you actually shot.
 
 ## Filming an effect (§12)
 

@@ -83,12 +83,10 @@ child at `100dvh` so bottom-anchored controls stay put. Never lock scrolling by 
 Changing the fill *colour* is not a fix. It turns a black band into a white one.
 
 **Verify.** Put a loud colour under the fold (`body { background: #ff00ff }`) and
-screenshot mid-page in the simulator. Magenta in the strip = overdraw. Any flat colour =
-still flat fill. When ablating one property at a time on a real page gets nowhere, build
-the suspect construct up on a minimal page instead — apply it for two seconds, remove it,
-scroll — with a no-construct control and a sticky-100dvh positive control. Eight such
-pages found the rule above in one simulator window after seventeen on-page ablations
-had not. Details in `references/verifying.md`.
+screenshot mid-page in the simulator: magenta in the strip = overdraw, any flat colour =
+flat fill. If ablating a real page gets nowhere, build the suspect up on minimal pages
+instead; eight of them found this rule after seventeen ablations had not
+(`references/verifying.md`, "Bisecting").
 
 ---
 
@@ -125,10 +123,9 @@ What makes the sample fail differs by page, and the same three probes settle it 
   it falls back.
 
 On a third site (iOS 27, iPhone 17 Pro) none of that mattered: the status bar followed
-`body`'s background colour, full stop — a solid, unfiltered sticky header did not win the
-sample back, `theme-color` did not override it, and it was read once, at load, and never
-again. That is the same colour the bottom strip reads live, and the timing difference is
-what makes §10 possible.
+`body`'s background colour, full stop — even a solid, unfiltered sticky header did not win
+the sample back — read once, at load. The bottom strip reads the same colour live, and
+that timing difference is what makes §10 possible.
 
 Once the page scrolls, what shows behind the status bar depends on what is at the top. On
 a page with nothing sticky, the scrolled content shows through, frosted. With a painted
@@ -158,74 +155,29 @@ Both colours above are remembered **per URL path**. Probing variants through que
 trails — it did here for a dozen probes. Serve each variant under its own path
 (`/p/variant-b/`).
 
-Also: the first screenshot after launching Safari in the simulator is unreliable (blank,
-or the start page). Launch Safari, wait, then open the URL and wait again. On a device that
-has just booted, `simctl openurl` can fail with "Operation timed out" and leave a white
-page that never paints — or "This webpage was reloaded because a problem occurred" on
-every URL, example.com included. That is the simulator, not your page: terminate Safari,
-launch it, wait ~10s, then open the URL.
+Also: the simulator's first shot after launching Safari is unreliable, and a freshly
+booted device can time out or crash every page (`references/verifying.md`, "The loop").
 
 ---
 
 ## 4. Viewport units and insets — the real numbers
 
-Measured on an iPhone 17 Pro, iOS 27, mobile Safari:
-
-```
-                portrait        landscape
-insets T/R/B/L  0 / 0 / 0 / 0   0 / 62 / 20 / 62
-100svh          714             292
-100lvh          754             402
-100dvh          714             292   (402 once Safari hides its chrome)
-100vh           754             402
-client w x h    402 x 714       874 x 292
-```
-
-Landscape on a real iPhone 15 Pro Max (iOS 27, Bottom bar): window 320 with Safari's
-chrome showing, 430 (the screen's full short side) once it hides; `svh` 320, `dvh` 320 →
-430, `lvh`/`vh` 430; insets 0 / 59 / 20 / 59. In landscape Safari swaps to a top bar with
-a tab row, and with website tinting on it paints that whole bar in `body`'s colour.
-
-And portrait by Safari tab layout (iOS 27.0 simulator, toolbar expanded unless noted;
-the 15 Pro Max Bottom and pill columns match a real phone exactly) — see §12:
-
-```
-                         15 Pro Max               18 Pro Max   18 Pro
-                         Compact  Bottom  pill*   Compact      Bottom
-screen.height            932      932     932     956          874
-page top (y=0 on screen) 59       59      59      62           62
-innerHeight / 100dvh     775      715     815     796          654
-100svh                   775      715     715     796          654
-100lvh / 100vh           815      815     815     836          754
-page drawn down to       932      932     932     956          874    (the screen's last row)
-strip below innerHeight  98       158     58      98           158
-insets T/B               0/0      0/0     0/0     0/0          0/0
-```
-`*` the Bottom bar collapsed to its pill by one swipe (injected touch; `scrollTo` never
-collapses the bars). `innerHeight` and `dvh` follow the bars; `svh` and `lvh` do not.
+The tables — per phone, per tab layout, portrait and landscape, simulator and a real
+15 Pro Max — are in `references/viewport-numbers.md`. Read them before sizing anything to
+the viewport. What they establish:
 
 - **The strip below the layout viewport is set by the tab layout, not the phone**: 98pt
-  with the Compact bar, 158pt with the Bottom bar, on every phone measured.
-- **The layout viewport starts under the status bar**: page y=0 is 59pt down on a 15 Pro
-  Max, 62pt on both 18s. What shows above it is `body`'s colour (§2, §10). So
-  `screen.height - innerHeight` is the strip at the bottom *plus* the status bar — an
-  over-estimate by 59–62pt, which is the safe direction for anything that must reach the
-  edge.
-- **`100lvh` stops 58pt above the screen's bottom edge** in every column above (e.g.
-  932 − 59 − 815), whatever the tab layout. It is not "the screen".
-- **Portrait reports all four `env(safe-area-inset-*)` as 0.** Safari reserves its own
-  chrome rather than handing the page an inset. Insets only become real in landscape, and
-  the side value follows the phone's status-bar depth: 62px on a 17 Pro, 59px on a 15 Pro
-  Max. Playwright's device descriptors fake 47.
-- **`vh` overshoots** by 40pt portrait, 110pt landscape. A `vh`-sized hero hangs its bottom
-  content that far below the screen.
-- **`dvh` for a viewport-sized stage; not `svh`.** In landscape Safari hides its chrome
-  almost entirely (entirely, on a 15 Pro Max) and an `svh` stage stops 110pt short, with
-  the parent's ground exposed.
-- **No `min-height` on a viewport-sized element.** A 22rem floor silently overrode a
-  292px landscape viewport and put a clipping bug back.
-- Playwright's WebKit models none of `svh`, `dvh`, or `env()`. Anything depending on them
-  is checked in the simulator, not the sweep.
+  with the Compact bar, 158pt with the Bottom bar (§12).
+- **The layout viewport starts 59–62pt down**, under the status bar, so
+  `screen.height - innerHeight` over-estimates the bottom strip: safe at an edge.
+- **`100lvh` stops 58pt above the screen's bottom edge** in every layout.
+- **Portrait insets all read 0.** Landscape sides are 59–62px by model, bottom 20;
+  Playwright fakes 47.
+- **`vh` overshoots** by 40pt portrait, 110pt landscape.
+- **`dvh` for a viewport-sized stage, not `svh`**, which stops 110pt short in landscape.
+- **No `min-height` on a viewport-sized element**: a 22rem floor overrode a 292px
+  landscape viewport and put a clipping bug back.
+- Playwright's WebKit models none of `svh`, `dvh` or `env()`. Check them in the simulator.
 
 ---
 
@@ -319,18 +271,16 @@ el.removeAttribute('data-boot');
   keyframes) — and on the real page the timeline sat inactive (`progress` 0, then `null`).
   Cross-element named view timelines via `timeline-scope` did not drive at all in WebKit.
   Keep a JS path; treat scroll timelines as an enhancement you verify on device.
-- **Changing a latched colour dynamically.** Ignored, both for the strip and the status
-  bar.
-- **Fixing the colour of the flat fill instead of the mode.** See §1.
+- **Changing a latched colour after load**, or the flat fill's colour instead of its mode.
+  Ignored for the status bar and a ratcheted strip (§1, §2); a plain strip is live (§10).
 
 ---
 
 ## 9. Testing pitfalls that produce false results
 
 Headless WebKit fires no `scroll` event for `scrollTo()` and barely advances animations,
-harnesses that scroll inside rAF measure their own ordering, and a screenshot you eyeball
-is a guess where a sampled pixel is a fact. Read `references/testing-pitfalls.md` before
-trusting any headless result or building a harness for §5–§7.
+and an eyeballed screenshot is a guess where a sampled pixel is a fact. Read
+`references/testing-pitfalls.md` before trusting a headless result or building a harness.
 
 ---
 
@@ -412,11 +362,10 @@ Three guards, each of which was a bug without it:
 Desktop is untouched by the gate: the only place `body` shows there is the rubber-band
 past either end, which stays the page's own ground.
 
-**Verify.** `references/verifying.md`, "Swap after load" and "Reload from the bottom". The
-collapsed pill needs a swipe: injected touch (`idb ui swipe`, or a simulator tool's swipe)
-collapses the bars in the simulator; a programmatic `scrollTo` never does, and with the
-toolbar expanded the page paints through mid-page in *every* variant, so a one-time swap
-looks fine there. When the simulator and the phone disagree, trust the phone and say so.
+**Verify.** `references/verifying.md`, "Swap after load", "Reload from the bottom" and
+"Collapsing the toolbar": only a swipe collapses the bars, never `scrollTo`, and with them
+expanded every variant paints through mid-page. When the simulator and the phone disagree,
+trust the phone and say so.
 
 ---
 
@@ -459,7 +408,8 @@ there anyway, because the bar was always a whole number of pixels tall.
 
 **Verify.** Sample the pixel column down the gutter and print only the transitions, in
 device rows and CSS px (`references/verifying.md`, "A transition map down one column").
-The whole difference is one row; "looks the same" is not a reading. A line that moves when the bar's height changes is this bug, not a design.
+The whole difference is one row; "looks the same" is not a reading. A line that moves
+when the bar's height changes is this bug, not a design.
 
 ---
 
@@ -542,10 +492,8 @@ ground, and the text under it must keep its old ink until the edge reaches it. T
 the edge-distance code for a circle reveal and the filmed timings are in
 `references/reveal-ink.md`.
 
-**Verify.** Ask which tab layout the reporter uses before anything else; it is one tap in
-Settings and changes the answer. Then set the same layout in the simulator (it defaults to
-Compact; `references/verifying.md`, "Safari's tab layout"), load a striped probe page and
-read where the stripes stop, and sample the bottom rows of your page mid-animation. Stripes
-to the last row and no band of the next section behind the bar is the pass. For the order
-in which things turn (the strip, the band under the section, the text), film it instead
-(`references/verifying.md`, "Filming an effect") and read the frames against each other.
+**Verify.** First ask which tab layout the reporter uses; it changes the answer. Set the
+same layout in the simulator (it defaults to Compact), then sample the bottom rows of your
+page mid-animation: stripes to the last row and no band of the next section behind the bar
+is the pass. For the order in which things turn, film it (`references/verifying.md`,
+"Safari's tab layout" and "Filming an effect").
