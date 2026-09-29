@@ -8,6 +8,12 @@ p{max-width:62ch}</style></head><body>
 <p>Each page is its own path, because Safari remembers the colours it latched per path (SKILL.md §3).
 Colours: <code>body</code> magenta <code>#ff00ff</code>, theme-color green <code>#00ff00</code>, element red <code>#ff0000</code>,
 stripes white and grey. These copies do not scroll themselves. Swipe up to collapse Safari's bars (a programmatic scroll never collapses them), and check that the readout's iH jumps to 100lvh. The expanded-toolbar set and its result are in <a href="../theme-color/">../theme-color/</a>.</p>
+<p><strong>Result, 2026-09-29</strong> (iOS 27.0 simulator, website tinting on): iPhone 18 Pro in the Compact
+layout, all seven pages; iPhone 15 Pro Max in the Bottom layout, control, meta and flat-red. One swipe collapsed
+the bars (the window became 100lvh). <code>theme-color</code> showed nowhere: not in the pill, under it or in the
+status bar, and no green pixel appeared in 17 screenshots. Every page except <code>flat-red</code> had stripes in
+the screen's last row, so there was no flat <code>body</code> strip under the pill. <code>flat-red</code> flat-filled
+in red on both devices, and its pill took a red tint.</p>
 <table><tr><th>Probe</th><th>theme-color</th><th>Question</th></tr>
 <tr><td><a href="control/">control</a></td><td>none</td><td>No theme-color, nothing sticky. What do the status bar and strip read with only body set?</td></tr>
 <tr><td><a href="meta/">meta</a></td><td>#00ff00</td><td>Same page plus theme-color green. Does the status bar or the toolbar tint take the green?</td></tr>

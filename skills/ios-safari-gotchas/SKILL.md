@@ -123,6 +123,12 @@ sample back, `theme-color` did not override it, and it was read once, at load, a
 again. That is the same colour the bottom strip reads live, and the timing difference is
 what makes §10 possible.
 
+Once the page scrolls, what shows behind the status bar depends on what is sticky. On a
+page with nothing sticky, the scrolled content shows through, frosted. On a page with any
+sticky element at the top, even a transparent one, the latched colour stays (iOS 27.0
+simulator, toolbar expanded and collapsed alike). So a screenshot of the status bar only
+means something at `scrollY` 0, or on a page with a sticky top.
+
 **Fix, in order.** Give the element under the status bar a solid `background-color` — that
 is what the sampler reads most reliably. If it still falls back, remove that element's
 `backdrop-filter` (invisible behind a ≥ 95%-opaque ground anyway). If a media layer is
@@ -329,10 +335,14 @@ the whole strip in `body`'s colour, on every screen — so a `body` that is dark
 page off, and a `body` that is light cut a dark footer off.
 
 That collapsed-pill reading is from a real phone on a real page and has not been pinned
-down. A plain probe page (stripes, magenta `body`, nothing sticky) collapsed to the pill by
-a swipe in the iOS 27.0 simulator painted its stripes under the pill to the screen's last
-row, with no `body` strip at all. Before building on the flat strip, check whether
-something on the page — a sticky or fixed element (§1) — is what flattens it there.
+down. In the iOS 27.0 simulator it does not reproduce. Seven probe pages were collapsed to
+the pill by a swipe, on an 18 Pro (Compact) and a 15 Pro Max (Bottom). They had nothing
+sticky, a translucent blurred sticky header, or a transparent sticky 100dvh stage. Every
+one painted its stripes under the pill to the screen's last row, with no `body` strip.
+Only an *opaque* 100dvh sticky stage changed it, and that was §1's flat fill in the
+stage's own colour, not `body`'s. Before building on the flat strip, check whether
+something on the page — an opaque viewport-sized sticky or fixed element (§1) — is what
+flattens it there, and confirm on the phone.
 
 Measured (iOS 27, iPhone 17 Pro, sampling the strip at max scroll): **nothing else reaches
 it.** A background on `html` — no. `theme-color` — no. A `position: fixed` sheet hung below
