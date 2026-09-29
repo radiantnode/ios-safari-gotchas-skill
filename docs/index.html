@@ -141,7 +141,9 @@
     font-variant-numeric: tabular-nums;
     font-variation-settings: "wdth" 80;
     text-align: right;
+    pointer-events: none;
   }
+  .pill[hidden] { display: none; }
   .probe { position: absolute; top: 0; left: 0; width: 0; visibility: hidden; }
   @media (prefers-reduced-motion: no-preference) {
     dd { transition: background-color 0.4s; }
@@ -167,9 +169,9 @@
       <dt>Safe-area insets</dt><dd id="v-insets">…</dd>
     </dl>
     <p class="guess" id="guess">Measuring…</p>
+    <p><a class="button" id="report" href="https://github.com/radiantnode/ios-safari-gotchas-skill/issues/new">Report these numbers</a></p>
     <p>Swipe up to collapse the toolbar, rotate, or switch the tab layout in Settings › Apps ›
       Safari. The numbers follow.</p>
-    <a class="button" id="report" href="https://github.com/radiantnode/ios-safari-gotchas-skill/issues/new">Report these numbers</a>
   </section>
 
   <section class="panel" aria-labelledby="read">
@@ -270,8 +272,21 @@
     return { m, g };
   };
 
+  // The pill only floats over bare stripes: hide it while any panel is under it.
+  const pill = document.querySelector('.pill');
+  const panels = [...document.querySelectorAll('.panel')];
+  const clearPill = () => {
+    pill.hidden = false;
+    const p = pill.getBoundingClientRect();
+    pill.hidden = panels.some((el) => {
+      const r = el.getBoundingClientRect();
+      return r.top < p.bottom + 8 && r.bottom > p.top - 8;
+    });
+  };
+
   const report = () => {
     const { m, g } = read();
+    clearPill();
     const body = [
       '**Device:** (model, and which Safari tab layout: Compact, Bottom or Top)',
       '',

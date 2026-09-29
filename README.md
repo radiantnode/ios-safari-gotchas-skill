@@ -16,6 +16,13 @@ driven by scroll position, and measures instead of guessing from CSS.
 in iPhone Safari. The page is a striped ruler that shows where Safari stops drawing your
 page, where `body` shows through, and your real `svh`/`dvh`/`lvh` and safe-area numbers.
 
+| Compact tab bar | Compact, toolbar collapsed | Bottom tab bar |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/compact-top.png" width="240" alt="Probe page in the Compact layout: window 714, lvh 754, guess reads Compact tab bar"> | <img src="docs/screenshots/compact-collapsed.png" width="240" alt="After a swipe: window 754, stripes run under the collapsed pill to the screen's last row"> | <img src="docs/screenshots/bottom-top.png" width="240" alt="Bottom layout: window 654, lvh 754, guess reads Bottom tab bar"> |
+| window 714, `lvh` 754 | window 754: the page runs under the pill | window 654: 60pt less than Compact |
+
+<sub>iPhone 18 Pro, iOS 27.0 simulator. Same screen and numbers as the iPhone 17 Pro.</sub>
+
 ## What's covered
 
 | § | Gotcha |
@@ -79,7 +86,7 @@ skills/ios-safari-gotchas/
   references/reveal-ink.md        holding text and ground under a reveal's overhang (§12)
   scripts/ink.py, sheet.py        samplers for filmed frames
 .claude-plugin/                   Claude Code plugin and marketplace manifests
-docs/index.html                   the live probe page, served by GitHub Pages
+docs/                             the live probe page (GitHub Pages) and its screenshots
 ```
 
 ## License
