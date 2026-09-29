@@ -28,6 +28,7 @@
   .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-block: 2px solid var(--black); }
   table { border-collapse: collapse; min-width: 56rem; width: 100%; font-size: 15px; line-height: 1.4; }
   th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid #bbb; }
+  .t4 { min-width: 44rem; }
   thead th { font-weight: 800; font-variation-settings: "wdth" 100; border-bottom: 2px solid var(--black); white-space: nowrap; }
   tbody th { font-weight: 700; white-space: nowrap; }
   tr:target { background: #fff7b3; }
@@ -176,6 +177,106 @@
   </table></div>
   <p class="muted">On flat-clear the transparent stage takes up the first screen of the page, so <code>body</code> shows above the
     stripes until you scroll past it. That's expected, and the bottom edge is what the page tests.</p>
+
+  <h2 id="resample">Does anything re-tint the bars after load?</h2>
+  <p>Each page changes one thing 5 seconds after it loads; the readout says BEFORE or AFTER. Take one screenshot
+    before 5 seconds and one after 8. joe-bell/apple-web-app reports that a fixed dim or a dialog re-tints both bars;
+    this skill has only tested a <code>body</code> color change, which didn't.</p>
+  <div class="scroll"><table class="t4">
+    <thead><tr><th scope="col">Probe</th><th scope="col">On the page</th><th scope="col">Simulator</th><th scope="col">iPhone 15 Pro Max</th></tr></thead>
+    <tbody>
+<tr id="resample-dim">
+  <th scope="row"><a href="resample/dim/">dim</a></th>
+  <td>fixed full-screen dim, rgba(0,0,0,.5), added at 5s</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="resample-dialog">
+  <th scope="row"><a href="resample/dialog/">dialog</a></th>
+  <td>native &lt;dialog&gt; opened with showModal() at 5s</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="resample-header-recolor">
+  <th scope="row"><a href="resample/header-recolor/">header-recolor</a></th>
+  <td>solid sticky header, blue at load, green at 5s</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="resample-header-added">
+  <th scope="row"><a href="resample/header-added/">header-added</a></th>
+  <td>no header at load; solid blue sticky header inserted at 5s</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="resample-body-then-nudge">
+  <th scope="row"><a href="resample/body-then-nudge/">body-then-nudge</a></th>
+  <td>body turned green at 5s, then a 1px scroll at 7s</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="rule">Which element does the sampler count?</h2>
+  <p>Static pages that test the rule in joe-bell/apple-web-app: Safari samples 4px in from the edge, counts an element
+    only if it spans at least 90% of the width, and blends a color below 0.75 alpha. Screenshot within 20 seconds.</p>
+  <div class="scroll"><table class="t4">
+    <thead><tr><th scope="col">Probe</th><th scope="col">On the page</th><th scope="col">Simulator</th><th scope="col">iPhone 15 Pro Max</th></tr></thead>
+    <tbody>
+<tr id="rule-solid">
+  <th scope="row"><a href="rule/solid/">solid</a></th>
+  <td>control: solid full-width blue sticky header</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="rule-alpha50">
+  <th scope="row"><a href="rule/alpha50/">alpha50</a></th>
+  <td>header at rgba(0,0,255,.5), no blur</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="rule-alpha80">
+  <th scope="row"><a href="rule/alpha80/">alpha80</a></th>
+  <td>header at rgba(0,0,255,.8), no blur</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="rule-width85">
+  <th scope="row"><a href="rule/width85/">width85</a></th>
+  <td>solid header, 85% of the width</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="rule-width95">
+  <th scope="row"><a href="rule/width95/">width95</a></th>
+  <td>solid header, 95% of the width</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="rule-top8">
+  <th scope="row"><a href="rule/top8/">top8</a></th>
+  <td>solid header stuck at top: 8px, with body showing above it</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="rule-center-pill">
+  <th scope="row"><a href="rule/center-pill/">center-pill</a></th>
+  <td>solid header plus a narrow fixed red pill at the top center</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="black">Why did the status bar go black?</h2>
+  <p>Fresh copies of the blurred-header page with no <code>theme-color</code>. Open the <code>dark-</code> pages with the
+    phone in Dark Mode, and the <code>notint-</code> pages in Light Mode with "Allow Website Tinting" off.</p>
+  <div class="scroll"><table class="t4">
+    <thead><tr><th scope="col">Probe</th><th scope="col">On the page</th><th scope="col">Simulator</th><th scope="col">iPhone 15 Pro Max</th></tr></thead>
+    <tbody>
+<tr id="black-dark-a">
+  <th scope="row"><a href="black/dark-a/">dark-a</a></th>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="black-dark-b">
+  <th scope="row"><a href="black/dark-b/">dark-b</a></th>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="black-dark-c">
+  <th scope="row"><a href="black/dark-c/">dark-c</a></th>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="black-notint-a">
+  <th scope="row"><a href="black/notint-a/">notint-a</a></th>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="black-notint-b">
+  <th scope="row"><a href="black/notint-b/">notint-b</a></th>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="black-notint-c">
+  <th scope="row"><a href="black/notint-c/">notint-c</a></th>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+</tr>
+    </tbody>
+  </table></div>
 </main>
 </body>
 </html>

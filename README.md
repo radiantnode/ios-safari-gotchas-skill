@@ -77,9 +77,11 @@ local or in Docker. Taps, swipes and rotation need injected input such as
 
 ## Measured on
 
-iOS 27 Safari: an iPhone 17 Pro, plus the iOS 27.0 simulator on the iPhone 15 Pro Max,
-18 Pro and 18 Pro Max, in the Compact and Bottom tab layouts. The Top layout has not been
-measured. Safari changes between releases, so trust a fresh measurement over a number here.
+iOS 27 Safari on two real phones, an iPhone 17 Pro and an iPhone 15 Pro Max (Bottom tab
+bar, portrait and landscape), plus the iOS 27.0 simulator on the iPhone 15 Pro Max, 18 Pro
+and 18 Pro Max, in the Compact and Bottom tab layouts. The Top layout and iOS 26 have not
+been measured; Liquid Glass arrived in iOS 26, so much of this probably applies there, but
+check before relying on a number. Safari changes between releases, so trust a fresh measurement over a number here.
 If one no longer holds, please open an issue with the device, iOS version and tab layout.
 
 ## Layout
