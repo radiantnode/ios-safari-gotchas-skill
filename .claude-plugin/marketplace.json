@@ -1,0 +1,14 @@
+{
+  "name": "ios-safari-gotchas",
+  "description": "iPhone Safari layout gotchas, measured in the iOS simulator, as an agent skill.",
+  "owner": {
+    "name": "Michael Simmons"
+  },
+  "plugins": [
+    {
+      "name": "ios-safari-gotchas",
+      "source": "./",
+      "description": "Measured rules, fixes and simulator-based verification for iPhone Safari layout bugs that headless tests can't show."
+    }
+  ]
+}

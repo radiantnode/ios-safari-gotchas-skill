@@ -1,0 +1,8 @@
+.DS_Store
+._*
+__pycache__/
+*.pyc
+# probe output, if you run the recipes from a checkout
+shots/
+frames/
+*.mp4
