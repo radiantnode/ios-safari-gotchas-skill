@@ -123,11 +123,13 @@ sample back, `theme-color` did not override it, and it was read once, at load, a
 again. That is the same colour the bottom strip reads live, and the timing difference is
 what makes §10 possible.
 
-Once the page scrolls, what shows behind the status bar depends on what is sticky. On a
-page with nothing sticky, the scrolled content shows through, frosted. On a page with any
-sticky element at the top, even a transparent one, the latched colour stays (iOS 27.0
-simulator, toolbar expanded and collapsed alike). So a screenshot of the status bar only
-means something at `scrollY` 0, or on a page with a sticky top.
+Once the page scrolls, what shows behind the status bar depends on what is at the top. On
+a page with nothing sticky, the scrolled content shows through, frosted. With a painted
+sticky header (translucent red, blurred), the latched colour stayed, both with the bars
+expanded and with them collapsed. A transparent sticky stage was mixed: frosted after a
+programmatic scroll with the bars expanded, the latched colour after a swipe collapsed
+them. That case is unresolved (iOS 27.0 simulator). So read the status bar's latched
+colour at `scrollY` 0.
 
 **Fix, in order.** Give the element under the status bar a solid `background-color` — that
 is what the sampler reads most reliably. If it still falls back, remove that element's
