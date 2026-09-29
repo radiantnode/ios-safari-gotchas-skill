@@ -38,8 +38,9 @@ that strip one of two ways:
 It picks flat fill when **an element that is `position: sticky` or `position: fixed` is
 the size of the dynamic viewport** (`inset: 0`, `100dvh`) — it reads that element as the
 page's ground rather than as one section of it. `body { position: fixed; inset: 0 }`, the
-classic scroll-lock shell, is exactly this. The fill colour is that element's paint or the
-page's `theme-color`; a detail, not the mechanism.
+classic scroll-lock shell, is exactly this. The fill colour is that element's own paint,
+never `theme-color`: a red 100dvh stage with a green `theme-color` filled red (iOS 27.0
+simulator). A transparent stage with nothing opaque inside it did not flat-fill at all.
 
 **It is a one-way ratchet.** The decision is taken the moment such an element exists and
 is kept for the life of the page: two seconds of a fixed viewport-sized box — a loading
@@ -97,10 +98,12 @@ had not. Details in `references/verifying.md`.
 light over a dark masthead, say — while another page with a similar top gets it right.
 
 **What is happening.** iOS samples what is painted at the top of the page, at load, and
-latches it. When the sample fails it falls back to `theme-color` (or the document ground).
-`theme-color` cannot override a sample that succeeded, so it can't force the answer; it
-only decides what the failure looks like — so set it to the page's ground regardless, as
-insurance.
+latches it. When the sample fails it falls back to `body`'s background colour.
+**`theme-color` plays no part on iOS 27**: with a translucent, blurred sticky header (the
+failing case below) and `theme-color` `#00ff00`, the status bar read `body`'s magenta,
+pixel for pixel the same as without the tag, and no green appeared in the status bar,
+the toolbar or the strip on any of seven probe pages (iOS 27.0 simulator, "Allow Website
+Tinting" on). Keep the tag for other browsers if you like, but it is not a lever here.
 
 What makes the sample fail differs by page, and the same three probes settle it every time
 (loud colours, distinct paths — see §3):
@@ -123,11 +126,11 @@ what makes §10 possible.
 **Fix, in order.** Give the element under the status bar a solid `background-color` — that
 is what the sampler reads most reliably. If it still falls back, remove that element's
 `backdrop-filter` (invisible behind a ≥ 95%-opaque ground anyway). If a media layer is
-what sits there, accept the fallback and make `theme-color` match the ground.
+what sits there, accept the fallback and make `body`'s background match the ground (§10).
 
-**Diagnose, don't assume.** Paint the top element a loud colour on one probe path and set
-`theme-color` to a different loud colour on another: the status bar then tells you whether
-you got a sample or a fallback. Probe colours that match the page's own ground tell you
+**Diagnose, don't assume.** Paint the top element one loud colour and `body` a different
+one, on their own probe path: the status bar then tells you whether you got a sample or a
+fallback. Probe colours that match the page's own ground tell you
 nothing.
 
 ---

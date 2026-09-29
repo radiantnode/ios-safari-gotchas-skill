@@ -8,6 +8,12 @@ p{max-width:62ch}</style></head><body>
 <p>Each page is its own path, because Safari remembers the colours it latched per path (SKILL.md §3).
 Colours: <code>body</code> magenta <code>#ff00ff</code>, theme-color green <code>#00ff00</code>, element red <code>#ff0000</code>,
 stripes white and grey. Each page scrolls itself to y=1500 thirty seconds after load.</p>
+<p><strong>Result, 2026-09-29</strong> (iPhone 18 Pro, iOS 27.0 simulator, Compact tab bar, "Allow
+Website Tinting" on): <code>theme-color</code> had no visible effect. No green pixel appeared in any of the
+14 screenshots. The status bar read <code>body</code>'s magenta, or the red stage's colour on
+<code>flat-red</code>. Each page with the tag was pixel-identical to its twin without it in the strip and
+the toolbar. <code>flat-red</code> flat-filled in the stage's red. <code>flat-clear</code> (transparent, nothing
+opaque inside) did not flat-fill.</p>
 <table><tr><th>Probe</th><th>theme-color</th><th>Question</th></tr>
 <tr><td><a href="control/">control</a></td><td>none</td><td>No theme-color, nothing sticky. What do the status bar and strip read with only body set?</td></tr>
 <tr><td><a href="meta/">meta</a></td><td>#00ff00</td><td>Same page plus theme-color green. Does the status bar or the toolbar tint take the green?</td></tr>

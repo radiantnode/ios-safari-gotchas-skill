@@ -29,7 +29,7 @@ page, where `body` shows through, and your real `svh`/`dvh`/`lvh` and safe-area 
 | § | Gotcha |
 |---|--------|
 | 1 | The flat strip behind the bottom toolbar, and the viewport-sized sticky/fixed element that ratchets the page into it |
-| 2 | The colour behind the status bar: what Safari samples, when it falls back to `theme-color` |
+| 2 | The colour behind the status bar: what Safari samples, what it falls back to, and why `theme-color` does nothing on iOS 27 |
 | 3 | Safari caches both decisions per URL path, so query-string probes lie |
 | 4 | Viewport units and insets: measured `svh`/`lvh`/`dvh`/`vh`, insets, by phone and tab layout |
 | 5 | Scroll-linked JS during a flick: drive it from `requestAnimationFrame` |
