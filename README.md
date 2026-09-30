@@ -42,7 +42,7 @@ in the simulator and on a real iPhone.
 | 7 | CSS transitions that WebKit parks at first paint |
 | 8 | Things that looked like fixes and were not |
 | 9 | Testing pitfalls that produce false results |
-| 10 | The strip's color is `body`'s (live), and so is the status bar's (once, at load) |
+| 10 | The strip's color is `body`'s, live, and so is the status bar's unless something at the top claims it |
 | 11 | A 1px hairline at a seam measured with `offsetHeight` |
 | 12 | How far the page runs under the toolbar depends on Safari's tab layout (Compact vs Bottom) |
 

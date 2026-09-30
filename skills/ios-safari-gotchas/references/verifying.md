@@ -98,8 +98,8 @@ modes (§10), so magenta at max scroll tells you nothing about the mode.
 
 ## Swap after load (§10)
 
-Which end re-reads `body`, and which one latched. Load light, go dark 3s later, then to
-the end:
+Whether something at the top holds the status bar while `body` drives the strip. Load
+light, go dark 3s later, then to the end:
 
 ```html
 <script>
@@ -111,8 +111,9 @@ setTimeout(() => {
 </script>
 ```
 
-Sample the status bar and the strip. Strip dark, status bar light = the trick in §10 is
-available. The scroll loop rather than one `scrollTo`: a single call at load+500ms lands
+Sample the status bar and the strip. Strip dark, status bar light = the top element is
+holding the status bar and §10's fix works. Both dark = nothing at the top wins the sample
+(SKILL.md §2); on iOS 27 that is what happens without one. The scroll loop rather than one `scrollTo`: a single call at load+500ms lands
 on a stale maximum and the readout shows `scrollY` as the number you asked for.
 
 ## Reload from the bottom (§10)
@@ -130,7 +131,7 @@ if (!sessionStorage.rl) {
 
 The second load restores the position and fires `scroll` with no gesture. Sample the status
 bar. In the simulator the swap always lost the race and the bar stayed light; a real phone
-with a cached reload is faster, and that is where a `load`-timed swap latched dark.
+with a cached reload is faster, and that is where a `load`-timed swap turned it dark.
 
 ## A readout that survives the screenshot
 

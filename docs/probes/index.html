@@ -47,12 +47,17 @@
     it is a color that appears nowhere else on it, so any trace of it would show.</p>
 
   <div class="findings">
-    <p><strong>What they showed on iOS 27</strong> (simulator, and a real iPhone 15 Pro Max with website tinting on):</p>
+    <p><strong>What they showed on iOS 27</strong> (simulator, and a real iPhone 15 Pro Max with website tinting on unless noted):</p>
     <ul>
       <li><code>theme-color</code>'s color never appeared: not in the status bar, the toolbar or the strip, on any page, device or tab layout.</li>
-      <li>When the status-bar sample fails (the blurred sticky header), the phone latched black on 8 of 11 loads and
-        <code>body</code>'s color on 3, whatever the tag said, including no tag. Identical copies disagreed, so it's a race.
-        The simulator gave <code>body</code>'s color every time.</li>
+      <li>The status bar keeps sampling after load. A recolored or inserted header, a new <code>body</code> color, a fixed
+        dim or a <code>&lt;dialog&gt;</code> re-tinted it within about 2 seconds, with website tinting on and off.</li>
+      <li>Safari samples the element 4px inside the top edge if it spans at least 90% of the width, takes alpha 0.75 and
+        up as opaque and blends below that. Otherwise it falls back to <code>body</code>'s color. This is the rule in
+        joe-bell/apple-web-app, and every page here agreed with it.</li>
+      <li>With a blurred sticky header, the phone sometimes fell back to black instead: 10 of 14 loads with website
+        tinting on, whatever the tag said, and 0 of 3 with it off. Identical copies disagreed, so it's a race. The
+        simulator gave <code>body</code>'s color every time.</li>
       <li>Only an opaque sticky element sized to the viewport flattened the strip under the toolbar, and it filled with that element's
         own color. No page showed a flat <code>body</code> strip under the collapsed pill.</li>
     </ul>
@@ -180,45 +185,44 @@
 
   <h2 id="resample">Does anything re-tint the bars after load?</h2>
   <p>Each page changes one thing 5 seconds after it loads; the readout says BEFORE or AFTER. Take one screenshot
-    before 5 seconds and one after 8. joe-bell/apple-web-app reports that a fixed dim or a dialog re-tints both bars;
-    this skill has only tested a <code>body</code> color change, which didn't.</p>
+    before 5 seconds and one after 8. Every change re-tinted the status bar, on the phone and in the simulator.</p>
   <div class="scroll"><table class="t4">
     <thead><tr><th scope="col">Probe</th><th scope="col">On the page</th><th scope="col">Simulator</th><th scope="col">iPhone 15 Pro Max</th></tr></thead>
     <tbody>
 <tr id="resample-dim">
   <th scope="row"><a href="resample/dim/">dim</a></th>
-  <td>fixed full-screen dim, rgba(0,0,0,.5), added at 5s</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>fixed full-screen dim, rgba(0,0,0,.5), added at 5s</td><td><span class="sw" style="background:#ff00ff"></span> → <span class="sw" style="background:#7f007f"></span> status bar; strip switches to <span class="sw" style="background:#7f007f"></span> flat fill</td><td><span class="sw" style="background:#ff00ff"></span> → <span class="sw" style="background:#7f007f"></span> status bar; strip and toolbar go flat <span class="sw" style="background:#7f007f"></span></td>
 </tr>
 <tr id="resample-dialog">
   <th scope="row"><a href="resample/dialog/">dialog</a></th>
-  <td>native &lt;dialog&gt; opened with showModal() at 5s</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>native &lt;dialog&gt; opened with showModal() at 5s</td><td>same as dim</td><td>same as dim</td>
 </tr>
 <tr id="resample-header-recolor">
   <th scope="row"><a href="resample/header-recolor/">header-recolor</a></th>
-  <td>solid sticky header, blue at load, green at 5s</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>solid sticky header, blue at load, green at 5s</td><td><span class="sw" style="background:#0000ff"></span> → <span class="sw" style="background:#00ff00"></span></td><td><span class="sw" style="background:#0000ff"></span> → <span class="sw" style="background:#00ff00"></span> (second load)</td>
 </tr>
 <tr id="resample-header-added">
   <th scope="row"><a href="resample/header-added/">header-added</a></th>
-  <td>no header at load; solid blue sticky header inserted at 5s</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>no header at load; solid blue sticky header inserted at 5s</td><td><span class="sw" style="background:#ff00ff"></span> → <span class="sw" style="background:#0000ff"></span></td><td><span class="sw" style="background:#ff00ff"></span> → <span class="sw" style="background:#0000ff"></span></td>
 </tr>
 <tr id="resample-body-then-nudge">
   <th scope="row"><a href="resample/body-then-nudge/">body-then-nudge</a></th>
-  <td>body turned green at 5s, then a 1px scroll at 7s</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>body turned green at 5s, then a 1px scroll at 7s</td><td><span class="sw" style="background:#ff00ff"></span> → <span class="sw" style="background:#00ff00"></span>, before the scroll</td><td><span class="sw" style="background:#ff00ff"></span> → <span class="sw" style="background:#00ff00"></span></td>
 </tr>
     </tbody>
   </table></div>
 
-  <p>The same two tests on fresh paths, to run with "Allow Website Tinting" off:</p>
+  <p>The same two tests on fresh paths with "Allow Website Tinting" off. The status bar still followed; only the toolbar's tint went away.</p>
   <div class="scroll"><table class="t4">
     <thead><tr><th scope="col">Probe</th><th scope="col">On the page</th><th scope="col">Simulator</th><th scope="col">iPhone 15 Pro Max</th></tr></thead>
     <tbody>
 <tr id="resample-notint-body-then-nudge">
   <th scope="row"><a href="resample-notint/body-then-nudge/">body-then-nudge</a></th>
-  <td>copy of resample/body-then-nudge, for "Allow Website Tinting" off</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>copy of resample/body-then-nudge, for "Allow Website Tinting" off</td><td><span class="muted">not run</span></td><td><span class="sw" style="background:#ff00ff"></span> → <span class="sw" style="background:#00ff00"></span>; toolbar untinted</td>
 </tr>
 <tr id="resample-notint-header-recolor">
   <th scope="row"><a href="resample-notint/header-recolor/">header-recolor</a></th>
-  <td>copy of resample/header-recolor, for "Allow Website Tinting" off</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>copy of resample/header-recolor, for "Allow Website Tinting" off</td><td><span class="muted">not run</span></td><td><span class="sw" style="background:#0000ff"></span> → <span class="sw" style="background:#00ff00"></span>; toolbar untinted</td>
 </tr>
     </tbody>
   </table></div>
@@ -231,64 +235,65 @@
     <tbody>
 <tr id="rule-solid">
   <th scope="row"><a href="rule/solid/">solid</a></th>
-  <td>control: solid full-width blue sticky header</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>control: solid full-width blue sticky header</td><td><span class="sw" style="background:#0000ff"></span></td><td><span class="sw" style="background:#0000ff"></span></td>
 </tr>
 <tr id="rule-alpha50">
   <th scope="row"><a href="rule/alpha50/">alpha50</a></th>
-  <td>header at rgba(0,0,255,.5), no blur</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>header at rgba(0,0,255,.5), no blur</td><td><span class="sw" style="background:#7f00ff"></span> blended over body</td><td><span class="sw" style="background:#7f00ff"></span> blended over body</td>
 </tr>
 <tr id="rule-alpha80">
   <th scope="row"><a href="rule/alpha80/">alpha80</a></th>
-  <td>header at rgba(0,0,255,.8), no blur</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>header at rgba(0,0,255,.8), no blur</td><td><span class="sw" style="background:#0000ff"></span> taken as opaque</td><td><span class="sw" style="background:#0000ff"></span> taken as opaque</td>
 </tr>
 <tr id="rule-width85">
   <th scope="row"><a href="rule/width85/">width85</a></th>
-  <td>solid header, 85% of the width</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>solid header, 85% of the width</td><td><span class="sw" style="background:#ff00ff"></span> not counted</td><td><span class="sw" style="background:#ff00ff"></span> not counted</td>
 </tr>
 <tr id="rule-width95">
   <th scope="row"><a href="rule/width95/">width95</a></th>
-  <td>solid header, 95% of the width</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>solid header, 95% of the width</td><td><span class="sw" style="background:#0000ff"></span></td><td><span class="sw" style="background:#0000ff"></span></td>
 </tr>
 <tr id="rule-top8">
   <th scope="row"><a href="rule/top8/">top8</a></th>
-  <td>solid header stuck at top: 8px, with body showing above it</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>solid header stuck at top: 8px, with body showing above it</td><td><span class="sw" style="background:#ff00ff"></span></td><td><span class="sw" style="background:#ff00ff"></span></td>
 </tr>
 <tr id="rule-center-pill">
   <th scope="row"><a href="rule/center-pill/">center-pill</a></th>
-  <td>solid header plus a narrow fixed red pill at the top center</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>solid header plus a narrow fixed red pill at the top center</td><td><span class="sw" style="background:#ff00ff"></span> (not red, not blue)</td><td><span class="sw" style="background:#ff00ff"></span> (not red, not blue)</td>
 </tr>
     </tbody>
   </table></div>
 
   <h2 id="black">Why did the status bar go black?</h2>
   <p>Fresh copies of the blurred-header page with no <code>theme-color</code>. Open the <code>dark-</code> pages with the
-    phone in Dark Mode, and the <code>notint-</code> pages in Light Mode with "Allow Website Tinting" off.</p>
+    phone in Dark Mode, and the <code>notint-</code> pages in Light Mode with "Allow Website Tinting" off. Dark Mode
+    made no difference; with tinting off, the black never appeared.</p>
   <div class="scroll"><table class="t4">
     <thead><tr><th scope="col">Probe</th><th scope="col">On the page</th><th scope="col">Simulator</th><th scope="col">iPhone 15 Pro Max</th></tr></thead>
     <tbody>
 <tr id="black-dark-a">
   <th scope="row"><a href="black/dark-a/">dark-a</a></th>
-  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">not run</span></td><td><span class="sw" style="background:#000"></span> (Dark Mode)</td>
 </tr>
 <tr id="black-dark-b">
   <th scope="row"><a href="black/dark-b/">dark-b</a></th>
-  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">not run</span></td><td><span class="sw" style="background:#ff00ff"></span> (Dark Mode)</td>
 </tr>
 <tr id="black-dark-c">
   <th scope="row"><a href="black/dark-c/">dark-c</a></th>
-  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">not run</span></td><td><span class="sw" style="background:#000"></span> (Dark Mode)</td>
 </tr>
 <tr id="black-notint-a">
   <th scope="row"><a href="black/notint-a/">notint-a</a></th>
-  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">not run</span></td><td><span class="sw" style="background:#ff00ff"></span> (tinting off)</td>
 </tr>
 <tr id="black-notint-b">
   <th scope="row"><a href="black/notint-b/">notint-b</a></th>
-  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">not run</span></td><td><span class="sw" style="background:#ff00ff"></span> (tinting off)</td>
 </tr>
 <tr id="black-notint-c">
   <th scope="row"><a href="black/notint-c/">notint-c</a></th>
-  <td>blurred translucent header, no theme-color</td><td><span class="muted">pending</span></td><td><span class="muted">pending</span></td>
+  <td>blurred translucent header, no theme-color</td><td><span class="muted">not run</span></td><td><span class="sw" style="background:#ff00ff"></span> (tinting off)</td>
 </tr>
     </tbody>
   </table></div>
