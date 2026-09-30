@@ -9,7 +9,8 @@ Each of these was found on a real iPhone and then pinned down in the iOS simulat
 changing one thing at a time. Headless WebKit (Playwright) reproduced **none** of the
 first three, and two of them ignore every property you would reach for first. When a
 symptom below matches, don't reason from CSS — measure. The recipe is in
-`references/verifying.md`.
+`references/verifying.md`; the `probes/…` pages cited below are hosted, with their results,
+at https://radiantnode.github.io/ios-safari-gotchas-skill/probes/.
 
 A habit that would have saved most of the time: **iOS takes its colors from what is
 painted, never from what you declare.** `theme-color` is ignored; the status bar and the
@@ -33,7 +34,7 @@ that strip one of two ways:
 
 - **Overdraw** — it keeps painting the page there, under a translucent bar. The default.
 - **Flat fill** — it stops the page at the layout viewport and fills the strip with one
-  color, chosen at load, kept for the whole document.
+  color, chosen when it switches on, kept for the whole document.
 
 It picks flat fill when **an element that is `position: sticky` or `position: fixed` is
 the size of the dynamic viewport** (`inset: 0`, `100dvh`) — it reads that element as the
@@ -110,7 +111,7 @@ or, on a real phone with "Allow Website Tinting" on, **black** on 10 of 14 loads
 blurred-header page, whatever the tag said (0 of 3 with tinting off; never in the
 simulator). Identical copies disagreed, so treat the black as a race.
 
-**`theme-color` is never the answer on iOS 27.** Across those eleven loads the tag was
+**`theme-color` is never the answer on iOS 27.** Across the blurred-header loads the tag was
 green, white, blue, dark slate, `body`'s own color, or absent, and its color never
 appeared. Pages whose sample succeeded were pixel-identical with and without it on the
 phone and in the simulator, in the status bar, the toolbar and the strip. Keep the tag for
@@ -133,9 +134,9 @@ iOS 27.0 simulator). On a real phone the frost keeps a cast of the sampled color
 read `d88adf`); in the simulator it was neutral gray. Read the status bar at `scrollY` 0.
 
 **Fix, in order.** Give the element under the status bar a solid `background-color`, full
-width, touching the top edge — that is what the sampler reads most reliably. If it still falls back, remove that element's
-`backdrop-filter` (invisible behind a ≥ 95%-opaque ground anyway). If a media layer is
-what sits there, accept the fallback and make `body`'s background match the ground (§10).
+width, touching the top edge — that is what the sampler reads most reliably. If it still
+falls back, remove that element's `backdrop-filter` (invisible behind a ≥ 95%-opaque ground
+anyway). If a media layer sits there, accept the fallback and make `body` match (§10).
 
 **Diagnose, don't assume.** Paint the top element one loud color and `body` a different
 one, on their own probe path: the status bar then tells you whether you got a sample or a
@@ -295,9 +296,9 @@ end does Safari paint something else: `body`'s background color. With the toolba
 the whole strip in `body`'s color, on every screen — so a `body` that is dark cut every
 page off, and a `body` that is light cut a dark footer off.
 
-That collapsed-pill reading is from a real phone on a real page and has not been pinned
-down. In the iOS 27.0 simulator it does not reproduce. Seven probe pages were collapsed to
-the pill by a swipe, on an 18 Pro (Compact) and a 15 Pro Max (Bottom). They had nothing
+That collapsed-pill reading is from a real phone on a real page, and nothing has reproduced
+it. In the iOS 27.0 simulator, seven probe pages were collapsed to the pill by a swipe,
+on an 18 Pro (Compact) and a 15 Pro Max (Bottom). They had nothing
 sticky, a translucent blurred sticky header, or a transparent sticky 100dvh stage. Every
 one painted its stripes under the pill to the screen's last row, with no `body` strip.
 Only an *opaque* 100dvh sticky stage changed it, and that was §1's flat fill in the

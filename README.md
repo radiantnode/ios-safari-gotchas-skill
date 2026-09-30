@@ -8,7 +8,8 @@ but not another, `100vh`/`dvh`/`svh`/`lvh` numbers that don't add up, safe-area 
 read 0 despite `viewport-fit=cover`, and scroll-linked JS that flashes during a flick.
 
 Every rule in it was first seen on a real iPhone and then pinned down in the iOS simulator by
-changing one thing at a time. Each one comes with the fix and a way to verify it. With the
+changing one thing at a time, and the color rules were re-checked on a real phone. Each one
+comes with the fix and a way to verify it. With the
 skill installed, your agent reads it before touching anything anchored to a screen edge or
 driven by scroll position, and measures instead of guessing from CSS.
 
@@ -26,8 +27,8 @@ page, where `body` shows through, and your real `svh`/`dvh`/`lvh` and safe-area 
 
 **Check the claims yourself:** the
 [Safari color probes](https://radiantnode.github.io/ios-safari-gotchas-skill/probes/) are the
-single-variable pages behind the `theme-color` and status-bar findings, with what each one showed
-in the simulator and on a real iPhone.
+single-variable pages behind the status-bar, toolbar-strip and `theme-color` findings, with what
+each one showed in the simulator and on a real iPhone.
 
 ## What's covered
 
@@ -81,8 +82,9 @@ iOS 27 Safari on two real phones, an iPhone 17 Pro and an iPhone 15 Pro Max (Bot
 bar, portrait and landscape), plus the iOS 27.0 simulator on the iPhone 15 Pro Max, 18 Pro
 and 18 Pro Max, in the Compact and Bottom tab layouts. The Top layout and iOS 26 have not
 been measured; Liquid Glass arrived in iOS 26, so much of this probably applies there, but
-check before relying on a number. Safari changes between releases, so trust a fresh measurement over a number here.
-If one no longer holds, please open an issue with the device, iOS version and tab layout.
+check before relying on a number. Safari changes between releases, so trust a fresh
+measurement over a number here. If one no longer holds, please open an issue with the
+device, iOS version and tab layout.
 
 ## Layout
 
@@ -96,6 +98,7 @@ skills/ios-safari-gotchas/
   scripts/ink.py, sheet.py        samplers for filmed frames
 .claude-plugin/                   Claude Code plugin and marketplace manifests
 docs/                             GitHub Pages: the edge probe, its screenshots, and probes/ (the color probes)
+tools/                            scripts that build the probe pages and their results page
 ```
 
 ## License

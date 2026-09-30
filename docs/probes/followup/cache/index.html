@@ -20,7 +20,7 @@ body{background:var(--ground);font:15px/1.35 -apple-system,system-ui,sans-serif}
 <div id="r"><span id="rv"></span>
 <a href="../../#followup-cache">What this tests</a></div>
 <script>
-// probe followup/cache: SKILL.md §3 says Safari remembers the status-bar color per URL path.
+// probe followup/cache: SKILL.md §3 used to say Safari remembers the status-bar color per URL path.
 // Load ?c=blue, then the same path with ?c=green. The top 120px shows body's color.
 // Blue status bar on the green load = the per-path cache is real. Green = it is not.
 const t0 = Date.now();
