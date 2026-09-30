@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>probe: followup/cache</title>
+<script>
+// Set body's color from ?c= before first paint, so there is no change after load.
+const C = { blue: '#0000ff', green: '#00ff00' }[new URLSearchParams(location.search).get('c')] || '#ff00ff';
+document.documentElement.style.setProperty('--ground', C);
+</script>
+<style>
+html,body{margin:0}
+body{background:var(--ground);font:15px/1.35 -apple-system,system-ui,sans-serif}
+.s{margin-top:120px;height:4000px;background:repeating-linear-gradient(#fff 0 20px,#bbb 20px 40px)}
+#r{position:fixed;left:8px;top:160px;z-index:5;background:#fff;color:#000;border:2px solid #000;padding:6px 8px;max-width:70%;white-space:pre-wrap}
+#r a{color:#00e}
+#r b{font-size:18px}
+</style></head>
+<body>
+<div class="s"></div>
+<div id="r"><span id="rv"></span>
+<a href="../../#followup-cache">What this tests</a></div>
+<script>
+// probe followup/cache: SKILL.md §3 used to say Safari remembers the status-bar color per URL path.
+// Load ?c=blue, then the same path with ?c=green. The top 120px shows body's color.
+// Blue status bar on the green load = the per-path cache is real. Green = it is not.
+const t0 = Date.now();
+setInterval(() => {
+  const s = Math.round((Date.now() - t0) / 1000);
+  rv.innerHTML = '<b>c = ' + (new URLSearchParams(location.search).get('c') || 'none') + '</b>\n' +
+    'followup/cache\nbody ' + getComputedStyle(document.body).backgroundColor + '\nt ' + s + 's';
+}, 250);
+</script>
+</body></html>

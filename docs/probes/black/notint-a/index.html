@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>probe: black/notint-a</title>
+<style>
+html,body{margin:0}
+body{background:#ff00ff;font:15px/1.35 -apple-system,system-ui,sans-serif}
+.s{height:4000px;background:repeating-linear-gradient(#fff 0 20px,#bbb 20px 40px)}
+#r{position:fixed;left:8px;top:120px;z-index:5;background:#fff;color:#000;border:2px solid #000;padding:6px 8px;max-width:70%;white-space:pre-wrap}
+#r a{color:#00e}
+#r b{font-size:18px}
+.hdr{position:sticky;top:0;height:64px;margin:0;background:rgba(255,0,0,.5);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);z-index:1}
+</style></head>
+<body>
+<div class="hdr"></div>
+<div class="s"></div>
+<div id="r"><span id="rv"></span>
+<a href="../../#black-notint-a">What this tests</a></div>
+<script>
+// probe black/notint-a: a translucent red sticky header with backdrop-filter blur, no theme-color (copy of header-blur-nometa)
+const t0 = Date.now();
+const CHANGE_AT = 0;   // seconds after load; 0 means nothing changes
+let phase = CHANGE_AT ? 'BEFORE' : 'static';
+function change(){}
+if (CHANGE_AT) addEventListener('load', () => setTimeout(() => { change(); phase = 'AFTER'; }, CHANGE_AT * 1000));
+setInterval(() => {
+  const s = Math.round((Date.now() - t0) / 1000);
+  rv.innerHTML = '<b>' + phase + (CHANGE_AT && phase === 'BEFORE' ? ' (changes at ' + CHANGE_AT + 's)' : '') + '</b>\n' +
+    'black/notint-a\nblurred header, no theme-color\n' + 'iH ' + innerHeight + '  y ' + Math.round(scrollY) + '  t ' + s + 's';
+}, 250);
+</script>
+</body></html>

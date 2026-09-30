@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Safari Edge Probe</title>
+<meta name="description" content="Open on an iPhone to see where Safari draws your page, where body shows through, and your real svh, lvh, dvh and safe-area numbers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+  /* The page is the instrument. Two rules keep it honest (see the skill):
+     - nothing fixed or sticky is sized to the viewport, or Safari switches the
+       strip under its toolbar to a flat fill (§1) and the stripes stop short;
+     - body stays magenta for the life of the page, so any magenta you see is body (§10). */
+  :root {
+    --cyan: #00aeef;
+    --yellow: #ffe600;
+    --magenta: #ff00ff;
+    --black: #000;
+    --paper: #fff;
+    --band: 40px;
+    --gutter: 44px;
+    color-scheme: light;
+  }
+  html, body { margin: 0; }
+  body {
+    background: var(--magenta);
+    color: var(--black);
+    font: 400 16px/1.5 Archivo, system-ui, sans-serif;
+    font-variation-settings: "wdth" 100;
+    -webkit-text-size-adjust: 100%;
+  }
+  .ruler {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 3600px;
+    box-sizing: border-box;
+    padding: 72px 0 120px;
+    background: repeating-linear-gradient(var(--cyan) 0 var(--band), var(--yellow) var(--band) calc(var(--band) * 2));
+  }
+  .tick {
+    position: absolute;
+    left: 0;
+    width: var(--gutter);
+    padding-right: 6px;
+    box-sizing: border-box;
+    text-align: right;
+    font-size: 11px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    font-variation-settings: "wdth" 75;
+    transform: translateY(-50%);
+  }
+  .tick::after {
+    content: "";
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    width: 8px;
+    border-top: 1px solid var(--black);
+  }
+  .panel {
+    position: relative;
+    margin: 0 16px 0 calc(var(--gutter) + 12px);
+    max-width: 34rem;
+    padding: 20px 20px 22px;
+    background: var(--paper);
+    border: 2px solid var(--black);
+  }
+  .panel + .panel { margin-top: 55vh; }
+  .panel.end { margin-top: auto; }   /* sits at the page's end */
+  h1 {
+    margin: 0 0 12px;
+    font-size: clamp(28px, 8.4vw, 40px);
+    line-height: 1.02;
+    font-weight: 850;
+    font-variation-settings: "wdth" 125;
+    letter-spacing: -0.01em;
+  }
+  h2 {
+    margin: 0 0 8px;
+    font-size: 21px;
+    line-height: 1.15;
+    font-weight: 800;
+    font-variation-settings: "wdth" 112;
+  }
+  p { margin: 0 0 12px; max-width: 62ch; }
+  p:last-child { margin-bottom: 0; }
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 16px;
+    margin: 16px 0;
+    padding: 14px 0;
+    border-block: 2px solid var(--black);
+    font-variant-numeric: tabular-nums;
+  }
+  dt { font-variation-settings: "wdth" 88; }
+  dd { margin: 0; font-weight: 700; font-variation-settings: "wdth" 88; }
+  .guess {
+    font-size: 19px;
+    line-height: 1.3;
+    font-weight: 700;
+  }
+  .swatch {
+    display: inline-block;
+    width: 0.8em;
+    height: 0.8em;
+    margin-right: 0.35em;
+    vertical-align: -0.05em;
+    border: 1px solid var(--black);
+  }
+  ul { margin: 0; padding-left: 0; list-style: none; }
+  li { margin-bottom: 10px; }
+  li:last-child { margin-bottom: 0; }
+  a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  a:focus-visible { outline: 3px solid var(--magenta); outline-offset: 2px; }
+  .button {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 10px 16px;
+    background: var(--black);
+    color: var(--paper);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  /* The live pill: small, fixed, nowhere near viewport-sized. */
+  .pill {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    padding: 6px 10px;
+    background: var(--paper);
+    border: 2px solid var(--black);
+    font-size: 13px;
+    line-height: 1.25;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    font-variation-settings: "wdth" 80;
+    text-align: right;
+    pointer-events: none;
+  }
+  .pill[hidden] { display: none; }
+  .probe { position: absolute; top: 0; left: 0; width: 0; visibility: hidden; }
+  @media (prefers-reduced-motion: no-preference) {
+    dd { transition: background-color 0.4s; }
+    dd.changed { background: var(--yellow); transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="pill" aria-hidden="true"><span id="pill-h">…</span><br><span id="pill-l"></span></div>
+
+<main class="ruler" id="ruler">
+  <section class="panel" aria-labelledby="title">
+    <h1 id="title">Where does Safari stop drawing?</h1>
+    <p>Open this page on an iPhone. The stripes are a ruler in CSS pixels, and the magenta is
+      <code>body</code>. Wherever you see magenta, Safari is painting <code>body</code> instead of the page.</p>
+    <dl aria-live="polite">
+      <dt>Screen</dt><dd id="v-screen">…</dd>
+      <dt>Window</dt><dd id="v-window">…</dd>
+      <dt>100svh</dt><dd id="v-svh">…</dd>
+      <dt>100dvh</dt><dd id="v-dvh">…</dd>
+      <dt>100lvh</dt><dd id="v-lvh">…</dd>
+      <dt>100vh</dt><dd id="v-vh">…</dd>
+      <dt>Safe-area insets</dt><dd id="v-insets">…</dd>
+    </dl>
+    <p class="guess" id="guess">Measuring…</p>
+    <p><a class="button" id="report" href="https://github.com/radiantnode/ios-safari-gotchas-skill/issues/new">Report these numbers</a></p>
+    <p>Swipe up to collapse the toolbar, rotate, or switch the tab layout in Settings › Apps ›
+      Safari. The numbers follow.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="read">
+    <h2 id="read">Reading the bottom edge</h2>
+    <ul>
+      <li><span class="swatch" style="background:var(--cyan)"></span><span class="swatch" style="background:var(--yellow)"></span>Stripes
+        to the screen's last row: Safari draws the page under its toolbar.
+        How far below the window it reaches depends on the tab layout, not the phone.</li>
+      <li><span class="swatch" style="background:var(--magenta)"></span>A flat magenta band with
+        the stripes cut off above it: you are seeing <code>body</code>. Here that only happens past
+        the end of the page. On your own site, a fixed or sticky element sized to the viewport
+        causes it on every screen.</li>
+      <li><span class="swatch" style="background:var(--magenta)"></span>Magenta behind the clock:
+        Safari sampled <code>body</code>'s color for the status bar when the page loaded, and
+        keeps it.</li>
+    </ul>
+  </section>
+
+  <section class="panel end" aria-labelledby="end">
+    <h2 id="end">The page ends just below</h2>
+    <p>Pull past the last stripe and the rubber band shows <code>body</code>: magenta. Safari re-reads
+      <code>body</code>'s color live for the strip under the toolbar, but reads it only once for
+      the status bar.</p>
+    <p>These rules, their fixes and a way to verify each one in the iOS simulator are written up
+      as an agent skill: <a href="https://github.com/radiantnode/ios-safari-gotchas-skill">iOS Safari Gotchas</a>.
+      The <a href="probes/">color probes</a> are the test pages behind its <code>theme-color</code> and
+      status-bar findings.</p>
+  </section>
+</main>
+
+<div class="probe" id="p-svh" style="height:100svh"></div>
+<div class="probe" id="p-dvh" style="height:100dvh"></div>
+<div class="probe" id="p-lvh" style="height:100lvh"></div>
+<div class="probe" id="p-vh" style="height:100vh"></div>
+<div class="probe" id="p-it" style="height:env(safe-area-inset-top)"></div>
+<div class="probe" id="p-ir" style="height:env(safe-area-inset-right)"></div>
+<div class="probe" id="p-ib" style="height:env(safe-area-inset-bottom)"></div>
+<div class="probe" id="p-il" style="height:env(safe-area-inset-left)"></div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const h = (id) => $(id).getBoundingClientRect().height;
+  const r = (n) => Math.round(n * 10) / 10;
+
+  // ruler labels every 200px down the gutter
+  const ruler = $('ruler');
+  const marks = () => {
+    ruler.querySelectorAll('.tick').forEach((t) => t.remove());
+    for (let y = 200; y < ruler.offsetHeight; y += 200) {
+      const t = document.createElement('div');
+      t.className = 'tick';
+      t.style.top = y + 'px';
+      t.textContent = y;
+      t.setAttribute('aria-hidden', 'true');
+      ruler.appendChild(t);
+    }
+  };
+
+  // Measured on iOS 27 Safari, portrait: lvh minus innerHeight is 40 with the
+  // Compact bar showing, 100 with the Bottom bar showing, 0 once collapsed.
+  const guess = (m) => {
+    if (!matchMedia('(pointer: coarse)').matches) return 'This looks like a desktop browser. Open the page on an iPhone.';
+    if (m.w > m.ih) return Math.abs(m.lvh - m.ih) <= 4
+      ? 'Landscape, with Safari\'s chrome hidden. Rotate back to guess the tab layout.'
+      : `Landscape, with Safari's chrome showing: the window is ${r(m.lvh - m.ih)}px shorter than 100lvh. Rotate back to guess the tab layout.`;
+    const d = m.lvh - m.ih;
+    if (Math.abs(d) <= 4) return 'Toolbar collapsed: the window is as tall as 100lvh. Scroll to the top to bring it back.';
+    if (Math.abs(d - 40) <= 6) return 'Looks like the Compact tab bar, with the toolbar showing.';
+    if (Math.abs(d - 100) <= 6) return 'Looks like the Bottom tab bar, with the toolbar showing.';
+    return `Unrecognized layout: the window is ${r(d)}px shorter than 100lvh. The Top layout has not been measured yet, so please report these numbers.`;
+  };
+
+  let last = {};
+  const set = (id, text) => {
+    const el = $(id);
+    if (last[id] !== undefined && last[id] !== text) {
+      el.classList.add('changed');
+      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('changed')));
+    }
+    last[id] = text;
+    if (el.textContent !== text) el.textContent = text;
+  };
+
+  const read = () => {
+    const m = {
+      sw: screen.width, sh: screen.height, w: innerWidth, ih: innerHeight,
+      svh: h('p-svh'), dvh: h('p-dvh'), lvh: h('p-lvh'), vh: h('p-vh'),
+      it: h('p-it'), ir: h('p-ir'), ib: h('p-ib'), il: h('p-il'),
+    };
+    set('v-screen', `${m.sw} × ${m.sh}`);
+    set('v-window', `${m.w} × ${m.ih}`);
+    set('v-svh', `${r(m.svh)}px`);
+    set('v-dvh', `${r(m.dvh)}px`);
+    set('v-lvh', `${r(m.lvh)}px`);
+    set('v-vh', `${r(m.vh)}px`);
+    set('v-insets', `${r(m.it)} ${r(m.ir)} ${r(m.ib)} ${r(m.il)}`);
+    const g = guess(m);
+    set('guess', g);
+    $('pill-h').textContent = `window ${m.ih}`;
+    $('pill-l').textContent = `lvh ${r(m.lvh)}`;
+    return { m, g };
+  };
+
+  // The pill only floats over bare stripes: hide it while any panel is under it.
+  const pill = document.querySelector('.pill');
+  const panels = [...document.querySelectorAll('.panel')];
+  const clearPill = () => {
+    pill.hidden = false;
+    const p = pill.getBoundingClientRect();
+    pill.hidden = panels.some((el) => {
+      const r = el.getBoundingClientRect();
+      return r.top < p.bottom + 8 && r.bottom > p.top - 8;
+    });
+  };
+
+  const report = () => {
+    const { m, g } = read();
+    clearPill();
+    const body = [
+      '**Device:** (model, and which Safari tab layout: Compact, Bottom or Top)',
+      '',
+      '```',
+      `screen   ${m.sw} x ${m.sh}`,
+      `window   ${m.w} x ${m.ih}`,
+      `svh ${r(m.svh)}  dvh ${r(m.dvh)}  lvh ${r(m.lvh)}  vh ${r(m.vh)}`,
+      `insets   ${r(m.it)} ${r(m.ir)} ${r(m.ib)} ${r(m.il)} (T R B L)`,
+      `guess    ${g}`,
+      `ua       ${navigator.userAgent}`,
+      '```',
+      '',
+      '**Where the stripes stop at the bottom of the screen:**',
+    ].join('\n');
+    const u = new URL('https://github.com/radiantnode/ios-safari-gotchas-skill/issues/new');
+    u.searchParams.set('title', `Measurements: ${m.sw}x${m.sh}, window ${m.ih}`);
+    u.searchParams.set('body', body);
+    $('report').href = u.toString();
+  };
+
+  marks();
+  report();
+  // A timer, not the scroll event: Safari delivers scroll late during a flick (§5).
+  setInterval(report, 250);
+  addEventListener('resize', () => { marks(); report(); });
+})();
+</script>
+</body>
+</html>
