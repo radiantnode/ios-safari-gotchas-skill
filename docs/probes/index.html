@@ -264,6 +264,23 @@
     </tbody>
   </table></div>
 
+  <h2 id="followup">Follow-ups</h2>
+  <p><code>combo</code> passes if the status bar stays cyan while the strip under the toolbar turns dark. <code>cache</code>
+    tests SKILL.md §3: if the second load's status bar is still blue, Safari keeps colors per path.</p>
+  <div class="scroll"><table class="t4">
+    <thead><tr><th scope="col">Probe</th><th scope="col">On the page</th><th scope="col">Simulator</th><th scope="col">iPhone 15 Pro Max</th></tr></thead>
+    <tbody>
+<tr id="followup-combo">
+  <th scope="row"><a href="followup/combo/">combo</a></th>
+  <td>§10's fix on one page: solid cyan masthead; body turns #111 at 5s, then the page scrolls to its end</td><td><span class="muted">not run</span></td><td><span class="muted">pending</span></td>
+</tr>
+<tr id="followup-cache">
+  <th scope="row"><a href="followup/cache/">cache</a></th>
+  <td>body color set from ?c= before first paint; load ?c=blue, then the same path with ?c=green</td><td><span class="muted">not run</span></td><td><span class="muted">pending</span></td>
+</tr>
+    </tbody>
+  </table></div>
+
   <h2 id="black">Why did the status bar go black?</h2>
   <p>Fresh copies of the blurred-header page with no <code>theme-color</code>. Open the <code>dark-</code> pages with the
     phone in Dark Mode, and the <code>notint-</code> pages in Light Mode with "Allow Website Tinting" off. Dark Mode

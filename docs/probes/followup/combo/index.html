@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>probe: followup/combo</title>
+<style>
+html,body{margin:0}
+body{background:#ff00ff;font:15px/1.35 -apple-system,system-ui,sans-serif}
+.masthead{position:sticky;top:0;height:64px;background:#00aeef;z-index:1}
+.page{background:repeating-linear-gradient(#fff 0 20px,#bbb 20px 40px)}
+.s{height:3000px}
+.band{height:400px;background:#111}
+#r{position:fixed;left:8px;top:120px;z-index:5;background:#fff;color:#000;border:2px solid #000;padding:6px 8px;max-width:70%;white-space:pre-wrap}
+#r a{color:#00e}
+#r b{font-size:18px}
+</style></head>
+<body>
+<div class="masthead"></div>
+<div class="page"><div class="s"></div><div class="band"></div></div>
+<div id="r"><span id="rv"></span>
+<a href="../../#followup-combo">What this tests</a></div>
+<script>
+// probe followup/combo: SKILL.md §10's fix as one page. A solid, full-width cyan masthead
+// claims the status bar; at 5s body turns #111 and the page scrolls to its end.
+// Pass: status bar stays cyan, strip under the toolbar turns dark.
+const t0 = Date.now();
+let phase = 'BEFORE';
+addEventListener('load', () => setTimeout(() => {
+  document.body.style.background = '#111';
+  phase = 'AFTER';
+  const e = Date.now() + 8000;
+  (function l(){ scrollTo(0, 1e7); if (Date.now() < e) setTimeout(l, 120); })();
+}, 5000));
+setInterval(() => {
+  const s = Math.round((Date.now() - t0) / 1000);
+  rv.innerHTML = '<b>' + phase + (phase === 'BEFORE' ? ' (changes at 5s)' : '') + '</b>\n' +
+    'followup/combo\ncyan masthead; body → #111 at 5s, then to the end\n' +
+    'body ' + getComputedStyle(document.body).backgroundColor + '\n' +
+    'iH ' + innerHeight + '  y ' + Math.round(scrollY) + '/' + Math.round(document.documentElement.scrollHeight - innerHeight) + '  t ' + s + 's';
+}, 250);
+</script>
+</body></html>
