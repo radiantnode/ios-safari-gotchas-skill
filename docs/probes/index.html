@@ -58,6 +58,8 @@
       <li>With a blurred sticky header, the phone sometimes fell back to black instead: 10 of 14 loads with website
         tinting on, whatever the tag said, and 0 of 3 with it off. Identical copies disagreed, so it's a race. The
         simulator gave <code>body</code>'s color every time.</li>
+      <li>So a solid, full-width header can hold the status bar while <code>body</code> drives the strip under the toolbar
+        (<code>combo</code>), and there is no per-URL color cache (<code>cache</code>).</li>
       <li>Only an opaque sticky element sized to the viewport flattened the strip under the toolbar, and it filled with that element's
         own color. No page showed a flat <code>body</code> strip under the collapsed pill.</li>
     </ul>
@@ -66,8 +68,8 @@
 
   <h2>How to run them</h2>
   <ul>
-    <li><strong>One load per page per device.</strong> Safari remembers the colors it picked for each path, so a reload replays
-      the first answer. To run a page again on the same device, copy it to a new path, or clear Safari's website data first.</li>
+    <li><strong>Reloading is fine for the status bar.</strong> Safari keeps no status-bar color per URL on iOS 27 (see
+      <code>cache</code> below). Flat fill across loads is untested, so for those pages a fresh copy on a new path is safer.</li>
     <li><strong>Expanded set:</strong> screenshot within 20 seconds of opening. Each page scrolls itself to y=1500 at 30 seconds,
       so a second shot gives you mid-page.</li>
     <li><strong>Collapsed set:</strong> these don't scroll themselves. Swipe up once so the bars collapse (a programmatic scroll
@@ -265,18 +267,18 @@
   </table></div>
 
   <h2 id="followup">Follow-ups</h2>
-  <p><code>combo</code> passes if the status bar stays cyan while the strip under the toolbar turns dark. <code>cache</code>
-    tests SKILL.md §3: if the second load's status bar is still blue, Safari keeps colors per path.</p>
+  <p><code>combo</code> passes if the status bar stays cyan while the strip under the toolbar turns dark; it did.
+    <code>cache</code> tests SKILL.md §3's old claim that Safari keeps colors per URL; the second load came up green, so it doesn't.</p>
   <div class="scroll"><table class="t4">
     <thead><tr><th scope="col">Probe</th><th scope="col">On the page</th><th scope="col">Simulator</th><th scope="col">iPhone 15 Pro Max</th></tr></thead>
     <tbody>
 <tr id="followup-combo">
   <th scope="row"><a href="followup/combo/">combo</a></th>
-  <td>§10's fix on one page: solid cyan masthead; body turns #111 at 5s, then the page scrolls to its end</td><td><span class="muted">not run</span></td><td><span class="muted">pending</span></td>
+  <td>§10's fix on one page: solid cyan masthead; body turns #111 at 5s, then the page scrolls to its end</td><td><span class="muted">not run</span></td><td><span class="sw" style="background:#00aeef"></span> status bar before and after; strip below the page turned dark: pass</td>
 </tr>
 <tr id="followup-cache">
   <th scope="row"><a href="followup/cache/">cache</a></th>
-  <td>body color set from ?c= before first paint; load ?c=blue, then the same path with ?c=green</td><td><span class="muted">not run</span></td><td><span class="muted">pending</span></td>
+  <td>body color set from ?c= before first paint; load ?c=blue, then the same path with ?c=green</td><td><span class="muted">not run</span></td><td><span class="sw" style="background:#0000ff"></span> then <span class="sw" style="background:#00ff00"></span>: no per-URL cache</td>
 </tr>
     </tbody>
   </table></div>

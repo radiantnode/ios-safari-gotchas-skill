@@ -143,15 +143,14 @@ fallback. Probe colors that match the page's own ground tell you nothing.
 
 ---
 
-## 3. Safari caches these decisions per URL
+## 3. No per-URL cache — but probe on separate paths anyway
 
-Both colors above are remembered **per URL path**. Probing variants through query strings
-(`?variant=b`) returns the first load's answer every time and sends you down false
-trails — it did here for a dozen probes. Serve each variant under its own path
-(`/p/variant-b/`).
-
-Also: the simulator's first shot after launching Safari is unreliable, and a freshly
-booted device can time out or crash every page (`references/verifying.md`, "The loop").
+On iOS 27 Safari keeps **no** status-bar color per URL: one path loaded with `?c=blue`,
+then `?c=green`, showed blue, then green, on a real 15 Pro Max (`probes/followup/cache`).
+A dozen earlier query-string probes that all returned the first answer predate the finding
+that the status bar re-samples and races (§2); treat them as unexplained. Flat fill (§1)
+across loads is untested. Separate paths per variant cost nothing and keep runs apart. The
+simulator's first shot after launching Safari is unreliable (`verifying.md`, "The loop").
 
 ---
 
@@ -323,8 +322,8 @@ top wins the sample.
 
 **Fix.** Claim the top with a sampled element (§2's rule), move the page's ground to a
 wrapper (`.page`), and make `body` follow whatever is at the bottom edge of the layout
-viewport, every frame, on coarse pointers only. Each half is measured
-(`probes/resample/`); the combination has not been probed as one page, so check it:
+viewport, every frame, on coarse pointers only. Measured as one page on a real 15 Pro Max
+(`probes/followup/combo`): the masthead held the status bar while `body` darkened the strip.
 
 ```js
 // inside the rAF loop from §5, alongside the top-edge check

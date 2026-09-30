@@ -38,15 +38,15 @@ shoot () {  # url, name
 
 Three rules that cost a day when ignored:
 
-1. **One path per variant.** Safari remembers the latched colors per URL path. Query
-   strings inherit the first load's answer. Copy the page to `/p/<variant>/index.html`
-   for every probe.
+1. **One path per variant.** It keeps runs independent. Safari keeps no status-bar color
+   per URL on iOS 27 (SKILL.md §3), but a past run of query-string probes returned the first
+   load's answer and was never explained. Copy the page to `/p/<variant>/index.html`.
 2. **Wait for load.** ~25s per shot in the simulator is not excessive. If a sample comes
    back pure white or pure black across the whole column, the page hadn't painted — reshoot.
    The first one or two shots after launching Safari are often blank regardless: open a
    throwaway page first. After `simctl erase`, loads take 60–75s for a while; wait longer.
 3. **Reset when you must re-measure a path.** `xcrun simctl erase <udid>` (device shut
-   down first) clears Safari's latched answers for every path. It also clears permissions:
+   down first) clears Safari's state for every path. It also clears permissions:
    a page that asks for location will then block on a system dialog you cannot tap —
    pre-grant it with `xcrun simctl privacy <udid> grant location-always com.apple.mobilesafari`.
 
@@ -196,7 +196,7 @@ The control must read stripes-through and `sticky` must read flat, or the rig is
 When a real page misbehaves and a minimal one doesn't, build *up* from the minimal page
 toward the real structure (sticky, then the viewport height, then an opaque child, then
 media) rather than *down* from the real page by deleting things — the real page has too
-many interacting parts, and the per-URL cache will lie to you on the way down. Each
+many interacting parts, and the status-bar race (SKILL.md §2) muddies every step down. Each
 minimal variant is one file and one 25-second shot.
 
 ## Ready-made probes
@@ -207,8 +207,8 @@ Two sets are already hosted:
 - https://radiantnode.github.io/ios-safari-gotchas-skill/probes/ has the single-variable color
   probes behind §1, §2 and §10, with the results recorded for the simulator and a real iPhone.
 
-Each color-probe path gives one honest reading per device (rule 1). To rerun one, serve a copy
-under a new path.
+Reloading a probe is fine for the status bar (SKILL.md §3). For anything else, serve a copy
+under a new path to be safe.
 
 ## Emulating late scroll delivery (§5), in Playwright WebKit
 
