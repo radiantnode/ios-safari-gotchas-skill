@@ -21,8 +21,13 @@ rotate`, or a simulator-control tool if the harness has one; `simctl` has none.
 
 ## The loop
 
+Three shell variables run through the recipes below, and none of them is a secret: `$U` is
+the simulator's UDID, read from the local device list; `$PWD` and `$SKILL` are filesystem
+paths handed to Docker as volume mounts. Everything here runs against a simulator on your
+own machine.
+
 ```sh
-U=$(xcrun simctl list devices | awk '/probe/{match($0,/[0-9A-F-]{36}/); print substr($0,RSTART,RLENGTH); exit}')
+U=$(xcrun simctl list devices | awk '/probe/{match($0,/[0-9A-F-]{36}/); print substr($0,RSTART,RLENGTH); exit}')   # a local device UDID
 xcrun simctl boot "$U"; xcrun simctl bootstatus "$U" -b
 # Just after boot both of these can fail with "Operation timed out" and leave Safari on a
 # white page that never paints, or crash every page ("This webpage was reloaded because a
@@ -201,7 +206,10 @@ minimal variant is one file and one 25-second shot.
 
 ## Ready-made probes
 
-Two sets are already hosted:
+Two sets are published from this skill's own repo, as static pages on GitHub Pages. Open
+them in a browser or point the simulator at them; nothing in this skill fetches them, and
+they collect nothing.
+
 - https://radiantnode.github.io/ios-safari-gotchas-skill/ is the striped edge probe with a live
   readout of the viewport units, insets and a guess at the tab layout.
 - https://radiantnode.github.io/ios-safari-gotchas-skill/probes/ has the single-variable color
@@ -295,6 +303,7 @@ Docker as below, or a local `ffmpeg`/`ffprobe` with the same arguments:
 
 ```sh
 mkdir -p frames
+# -v "$PWD":/w mounts the current folder so ffmpeg can read out.mp4 and write frames/.
 docker run --rm -v "$PWD":/w jrottenberg/ffmpeg:6.1-alpine -loglevel error -i /w/out.mp4 \
   -fps_mode passthrough -frame_pts 1 -enc_time_base 0.001 /w/frames/%05d.png
 # the timestamps alone:
@@ -321,8 +330,10 @@ Reading the film:
   the night→day tap, and no such gap after the day→night tap. The switch awaited the day
   photograph's decode before starting the circle; the simulator was not stalling.
 
-Two samplers in this skill's `scripts/` folder. From the folder holding `frames/`, with
-`$SKILL` set to this skill's directory:
+Two samplers in this skill's `scripts/` folder. Both read local PNGs with Pillow and print
+numbers; neither opens a socket. Run them from the folder holding `frames/`, with `$SKILL`
+set to this skill's directory — the two `-v` mounts are that folder and this skill's
+`scripts/`, nothing else:
 `docker run --rm -v "$PWD":/w -v "$SKILL/scripts":/s -w /w python:3.12-slim sh -c 'pip -q install pillow >/dev/null; python /s/ink.py frames/'`
 (or `python3 "$SKILL/scripts/ink.py" frames/` with Pillow installed):
 
