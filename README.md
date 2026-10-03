@@ -1,4 +1,4 @@
-# iOS Safari Gotchas
+# iOS Safari Gotchas Skill
 
 An [agent skill](https://agentskills.io) for the iPhone Safari bugs that desktop browsers and
 headless WebKit never show, measured on iOS 27 with Safari's Liquid Glass toolbar. Examples:
