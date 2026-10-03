@@ -2,7 +2,7 @@
   "name": "ios-safari-gotchas",
   "displayName": "iOS Safari Gotchas",
   "description": "Measured rules, fixes and simulator-based verification for iPhone Safari layout bugs that headless tests can't show: toolbar strips, status-bar color, viewport units, safe areas, scroll-linked JS.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Michael Simmons"
   },
